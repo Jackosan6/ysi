@@ -12,7 +12,7 @@ SUPERTAXfn(Super_Inc = Super_Inc, Age = Age)
 \item{Age}{The age of the tax payer}
 }
 \value{
-A list
+A vector
 }
 \description{
 Super Tax function for use on HIDLA, as part of the Income Tax Assesment

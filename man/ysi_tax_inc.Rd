@@ -13,15 +13,6 @@ ysi_tax_inc(df = NULL)
 A data frame
 }
 \description{
-This function combines all the nessesary income tax functions and data set mutations to be an all-in-one function for calculating Income Tax
-}
-\details{
-It generates the following, which are mostly a sum of the posative and negative HILDA variables:
-
-House Income (HouseInc)
-Total Individual Income (TotalIncome)
-Regular Individual Income (RegInc)
-HouseHold level combined Assets (Assets)
-Idividual Net Rent (NetRent)
+This function just finds taxable income.
 }
 

@@ -10,7 +10,7 @@ DEDfn(RegInc = RegInc)
 \item{TaxInc}{Whole dollar value of taxable income}
 }
 \value{
-A list
+A vector
 }
 \description{
 Deductions Function for use on HIDLA, as part of the Income Tax Assesment

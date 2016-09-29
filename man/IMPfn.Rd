@@ -8,7 +8,7 @@ IMPfn(ShareDiv = ShareDiv, Citizenship = Citizenship,
   InvestInc_p = InvestInc_p)
 }
 \value{
-A list
+A vector
 }
 \description{
 Imputation Credits function for use on HIDLA, as part of the Income Tax Assesment

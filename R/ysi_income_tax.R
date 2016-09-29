@@ -10,35 +10,46 @@
 
 ysi_income_tax <- function(df= NULL) {
   temp <- ysi_mutate_combine(df)
-  temp$Deduct <- sapply(temp$RegInc, DEDfn)
+  temp$Deduct <- mapply(temp, DEDfn)
   temp <- ysi_tax_inc_mut(temp)
-
+  temp$Supertax <- mapply(SUPERTAXfn, temp$Super_Inc, temp$Age)
+  temp$Supertax[is.na(temp$Supertax)] <- 0
 
   return(temp)
 }
 
+#' REG Income Tax Function
+#'
+#' This function finds the amount of income tax payable, with the 2014 rates
+#'
+#'
+#' @param income Taxable Income
+#' @param brackets Tax brackes as vector, typically with the last bracket being Inf
+#' @param rates tax rates as vector, must equal number of brakets
+#' @return A vector
+
+
+RegIncTAXfn <- function(income = NULL,brackets=c(18200, 37000, 80000, 180000,Inf),
+                        rates=c(0,.19,.325,.37,.45)){
+  sum(diff(c(0,pmin(income,brackets)))*rates)
+}
+
+
+
+
 
 #' YSI Taxable Income Standalone Function
 #'
-#' This function combines all the nessesary income tax functions and data set mutations to be an all-in-one function for calculating Income Tax
-#'
-#' It generates the following, which are mostly a sum of the posative and negative HILDA variables:
-#'
-#' House Income (HouseInc)
-#' Total Individual Income (TotalIncome)
-#' Regular Individual Income (RegInc)
-#' HouseHold level combined Assets (Assets)
-#' Idividual Net Rent (NetRent)
+#' This function just finds taxable income.
 #'
 #' @param df Argument is intended to be a fresh HILDA data frame
 #' @return A data frame
 #' @export
 
-ysi_tax_inc <- function(df= NULL) {
+ysi_tax_inc <- function(df = NULL) {
   temp <- ysi_mutate_combine(df)
   temp$Deduct <- sapply(temp$RegInc, DEDfn)
   temp <- ysi_tax_inc_mut(temp)
-
 
   return(temp)
 }
@@ -53,8 +64,7 @@ ysi_tax_inc <- function(df= NULL) {
 #' Requires TaxInc (Taxable Income) variable to have been calulated previously
 #'
 #' @param TaxInc Whole dollar value of taxable income
-#' @return A list
-#' @export
+#' @return A vector
 
 
 
@@ -77,8 +87,7 @@ return(ML)}
 #' Requires TaxInc (Taxable Income) variable to have been calulated previously
 #'
 #' @param TaxInc Whole dollar value of taxable income
-#' @return A list
-#' @export
+#' @return A vector
 
 LITOfn<-function(TaxInc= TaxInc)  {if(TaxInc < 37000)
 {LITO <- 445
@@ -100,8 +109,7 @@ return(LITO)}
 #' @param WageIncImp_SalSac Whole dollar value of Wage income with salary sacrifice
 #' @param YoB The year of birth
 
-#' @return A list
-#' @export
+#' @return A vector
 
 
 MATOfn<-function(WageIncImp_SalSac= WageIncImp_SalSac, YoB= YoB)  {if(WageIncImp_SalSac < 10000)
@@ -126,8 +134,7 @@ return(MATO)}
 #' Requires TaxInc (Taxable Income) variable to have been calulated previously
 #'
 #' @param TaxInc Whole dollar value of taxable income
-#' @return A list
-#' @export
+#' @return A vector
 
 SAPTOfn <-function(TaxInc = TaxInc) {if(TaxInc < 32279)
 {SAPTO <- 2230
@@ -148,8 +155,7 @@ return(SAPTO)}
 #' Requires TaxInc (Taxable Income) variable to have been calulated previously
 #'
 #' @param TaxInc Whole dollar value of taxable income
-#' @return A list
-#' @export
+#' @return A vector
 
 OTHEROFFfn <- function(TaxInc = TaxInc) {if(TaxInc < 6000)
 { Otheroff <- 0.003 * TaxInc
@@ -227,8 +233,7 @@ return(Otheroff)}
 #' Requires TaxInc (Taxable Income) variable to have been calulated previously
 #'
 #' @param TaxInc Whole dollar value of taxable income
-#' @return A list
-#' @export
+#' @return A vector
 
 
 DEDfn <- function(RegInc = RegInc) {if(RegInc < 6000)
@@ -307,8 +312,7 @@ return(Deduct)}
 #'
 #' @param Super_Inc Whole dollar value of super income
 #' @param Age The age of the tax payer
-#' @return A list
-#' @export
+#' @return A vector
 
 SUPERTAXfn <- function(Super_Inc = Super_Inc, Age = Age) {
   if (Super_Inc <  100697) {
@@ -340,8 +344,7 @@ SUPERTAXfn <- function(Super_Inc = Super_Inc, Age = Age) {
 #' @param ShareDiv
 #' @param Citizenship
 #' @param InvestInc_p
-#' @return A list
-#' @export
+#' @return A vector
 
 #Calculating imputation credits
 IMPfn <- function(ShareDiv = ShareDiv, Citizenship = Citizenship, InvestInc_p = InvestInc_p) {

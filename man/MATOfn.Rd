@@ -12,7 +12,7 @@ MATOfn(WageIncImp_SalSac = WageIncImp_SalSac, YoB = YoB)
 \item{YoB}{The year of birth}
 }
 \value{
-A list
+A vector
 }
 \description{
 Mature Age Tax Offset (MATO) for use on HIDLA, as part of the Income Tax Assesment

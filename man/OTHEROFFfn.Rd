@@ -10,7 +10,7 @@ OTHEROFFfn(TaxInc = TaxInc)
 \item{TaxInc}{Whole dollar value of taxable income}
 }
 \value{
-A list
+A vector
 }
 \description{
 Other Tax Offsets Function for use on HIDLA, as part of the Income Tax Assesment
