@@ -10,7 +10,7 @@
 
 ysi_income_tax <- function(df = NULL) {
   temp <- ysi_mutate_combine(df)
-  temp$Deduct <- sapply(temp, DEDfn)
+  temp$Deduct <- sapply(temp$RegInc, DEDfn)
   temp <- ysi_tax_inc_mut(temp)
   # temp$Supertax <- mapply(SUPERTAXfn, temp$Super_Inc, temp$Age)
   # temp$Supertax[is.na(temp$Supertax)] <- 0
@@ -175,7 +175,7 @@ return(Otheroff)}
 
 
 
-DEDfn <- function(RegInc = RegInc) {if(RegInc < 6000)
+DEDfn <- function(RegInc = NULL) {if(RegInc < 6000)
 { Deduct <- 0.118 * RegInc
 return(Deduct)}
   else if(RegInc < 10000)
