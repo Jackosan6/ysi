@@ -1,6 +1,6 @@
 #' ysi Mutate_combine Function
 #'
-#' This function is a standalone function that mutates multiple useful and commonly used variable for YSI analysis.
+#' This function mutates multiple useful and commonly used variable for YSI analysis as part of
 #'
 #' It generates the following, which are mostly a sum of the posative and negative HILDA variables:
 #'
