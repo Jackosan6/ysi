@@ -18,25 +18,6 @@ ysi_income_tax <- function(df= NULL) {
   return(temp)
 }
 
-#' REG Income Tax Function
-#'
-#' This function finds the amount of income tax payable, with the 2014 rates
-#'
-#'
-#' @param income Taxable Income
-#' @param brackets Tax brackes as vector, typically with the last bracket being Inf
-#' @param rates tax rates as vector, must equal number of brakets
-#' @return A vector
-
-
-RegIncTAXfn <- function(income = NULL,brackets=c(18200, 37000, 80000, 180000,Inf),
-                        rates=c(0,.19,.325,.37,.45)){
-  sum(diff(c(0,pmin(income,brackets)))*rates)
-}
-
-
-
-
 
 #' YSI Taxable Income Standalone Function
 #'
@@ -54,6 +35,22 @@ ysi_tax_inc <- function(df = NULL) {
   return(temp)
 }
 
+
+
+RegIncTAXfn <- function(income = NULL,brackets=c(18200, 37000, 80000, 180000,Inf),
+                        rates=c(0,.19,.325,.37,.45)){
+  sum(diff(c(0,pmin(income,brackets)))*rates)
+}
+
+
+
+
+
+ysi_tax_inc_mut <- function(df = NULL) {
+
+  mutate(df, TaxInc=RegInc-Super_Inc-PrivTran-PubTransImp-ScholarshipsImp-SalSac_MainImp*52-SalSac_OtherImp*52-Deduct)
+
+}
 
 
 

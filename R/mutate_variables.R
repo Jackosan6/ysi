@@ -23,21 +23,4 @@ ysi_mutate_combine <- function(df= NULL) {
                NetRent = Rent_p - Rent_n)
 }
 
-#' YSI Taxable Income Mutate Function
-#'
-#' This function mutates Taxable Income (TaxInc), a commonly used variable for YSI analysis as part of Income Tax Assesment
-#'
-#' It generates taxable income as a variable. Dependent on having used:
-#'
-#' ysi_mutate_combine()
-#' DEDfn()
-#'
-#' @param df Argument is intended to be an edited HILDA data frame
-#' @return A data frame
-#' @export
 
-ysi_tax_inc_mut <- function(df = NULL) {
-
-  mutate(df, TaxInc=RegInc-Super_Inc-PrivTran-PubTransImp-ScholarshipsImp-SalSac_MainImp*52-SalSac_OtherImp*52-Deduct)
-
-}
