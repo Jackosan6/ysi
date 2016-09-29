@@ -4,7 +4,7 @@
 \alias{SAPTOfn}
 \title{Seniors and Pensioners Tax Offset (SAPTO) Function}
 \usage{
-SAPTOfn(Taxinc = NULL)
+SAPTOfn(TaxInc = TaxInc)
 }
 \arguments{
 \item{TaxInc}{Whole dollar value of taxable income}

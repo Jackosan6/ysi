@@ -4,7 +4,7 @@
 \alias{MLfn}
 \title{Medicare Levy Function}
 \usage{
-MLfn(Taxinc = NULL)
+MLfn(TaxInc = NULL)
 }
 \arguments{
 \item{TaxInc}{Whole dollar value of taxable income}

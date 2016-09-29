@@ -4,7 +4,7 @@
 \alias{LITOfn}
 \title{Low Income Tax Offset (LITO) Function}
 \usage{
-LITOfn(Taxinc = NULL)
+LITOfn(TaxInc = NULL)
 }
 \arguments{
 \item{TaxInc}{Whole dollar value of taxable income}

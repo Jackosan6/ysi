@@ -4,7 +4,7 @@
 \alias{MATOfn}
 \title{Mature Age Tax Offset (MATO) Function}
 \usage{
-MATOfn(WageIncImp_SalSac = NULL, YoB = NULL)
+MATOfn(WageIncImp_SalSac = WageIncImp_SalSac, YoB = YoB)
 }
 \arguments{
 \item{WageIncImp_SalSac}{Whole dollar value of Wage income with salary sacrifice}

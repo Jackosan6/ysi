@@ -38,14 +38,14 @@ ysi_income_tax <- function(df= NULL) {
 
 
 
-MLfn<-function(Taxinc = NULL)  {if(Taxinc < 20542)
+MLfn<-function(TaxInc = NULL)  {if(TaxInc < 20542)
 {ML <- 0
 return(ML)}
-  else if(Taxinc < 24167)
-  {ML <-  0.1*(Taxinc - 20542)
+  else if(TaxInc < 24167)
+  {ML <-  0.1*(TaxInc - 20542)
   return(ML)}
   else
-  {ML <- 0.015*Taxinc
+  {ML <- 0.015*TaxInc
   return(ML)}
 }
 
@@ -60,11 +60,11 @@ return(ML)}
 #' @return A list
 #' @export
 
-LITOfn<-function(Taxinc= NULL)  {if(Taxinc < 37000)
+LITOfn<-function(TaxInc= NULL)  {if(TaxInc < 37000)
 {LITO <- 445
 return(LITO)}
-  else if(Taxinc < 66667)
-  {LITO <- 445 - 0.015*(Taxinc - 37000)
+  else if(TaxInc < 66667)
+  {LITO <- 445 - 0.015*(TaxInc - 37000)
   return(LITO)}
   else
   {LITO <- 0
@@ -84,7 +84,7 @@ return(LITO)}
 #' @export
 
 
-MATOfn<-function(WageIncImp_SalSac= NULL, YoB= NULL)  {if(WageIncImp_SalSac < 10000)
+MATOfn<-function(WageIncImp_SalSac= WageIncImp_SalSac, YoB= YoB)  {if(WageIncImp_SalSac < 10000)
 {MATO <- 0.05*WageIncImp_SalSac
 return(MATO)}
   else if(WageIncImp_SalSac < 53000)
@@ -109,11 +109,11 @@ return(MATO)}
 #' @return A list
 #' @export
 
-SAPTOfn <-function(Taxinc = NULL) {if(Taxinc < 32279)
+SAPTOfn <-function(TaxInc = TaxInc) {if(TaxInc < 32279)
 {SAPTO <- 2230
 return(SAPTO)}
-  else if(Taxinc < 50119)
-  {SAPTO <- 2230 - 0.125*(Taxinc - 32279)
+  else if(TaxInc < 50119)
+  {SAPTO <- 2230 - 0.125*(TaxInc - 32279)
   return(SAPTO)}
   else
   {SAPTO <- 0
@@ -131,71 +131,71 @@ return(SAPTO)}
 #' @return A list
 #' @export
 
-OTHEROFFfn <- function(Taxinc = NULL) {if(Taxinc < 6000)
-{ Otheroff <- 0.003 * Taxinc
+OTHEROFFfn <- function(TaxInc = TaxInc) {if(TaxInc < 6000)
+{ Otheroff <- 0.003 * TaxInc
 return(Otheroff)}
-  else if(Taxinc < 10000)
-  { Otheroff <- 0.002 * Taxinc
+  else if(TaxInc < 10000)
+  { Otheroff <- 0.002 * TaxInc
   return(Otheroff)}
-  else if(Taxinc < 15000)
-  { Otheroff <- 0.002 * Taxinc
+  else if(TaxInc < 15000)
+  { Otheroff <- 0.002 * TaxInc
   return(Otheroff)}
-  else if(Taxinc < 20000)
-  { Otheroff <- 0.006 * Taxinc
+  else if(TaxInc < 20000)
+  { Otheroff <- 0.006 * TaxInc
   return(Otheroff)}
-  else if(Taxinc < 25000)
-  { Otheroff <- 0.007 * Taxinc
+  else if(TaxInc < 25000)
+  { Otheroff <- 0.007 * TaxInc
   return(Otheroff)}
-  else if(Taxinc < 30000)
-  { Otheroff <- 0.006 * Taxinc
+  else if(TaxInc < 30000)
+  { Otheroff <- 0.006 * TaxInc
   return(Otheroff)}
-  else if(Taxinc < 35000)
-  { Otheroff <- 0.007 * Taxinc
+  else if(TaxInc < 35000)
+  { Otheroff <- 0.007 * TaxInc
   return(Otheroff)}
-  else if(Taxinc < 40000)
-  { Otheroff <- 0.006 * Taxinc
+  else if(TaxInc < 40000)
+  { Otheroff <- 0.006 * TaxInc
   return(Otheroff)}
-  else if(Taxinc < 45000)
-  { Otheroff <- 0.006 * Taxinc
+  else if(TaxInc < 45000)
+  { Otheroff <- 0.006 * TaxInc
   return(Otheroff)}
-  else if(Taxinc < 50000)
-  { Otheroff <- 0.005 * Taxinc
+  else if(TaxInc < 50000)
+  { Otheroff <- 0.005 * TaxInc
   return(Otheroff)}
-  else if(Taxinc < 55000)
-  { Otheroff <- 0.005 * Taxinc
+  else if(TaxInc < 55000)
+  { Otheroff <- 0.005 * TaxInc
   return(Otheroff)}
-  else if(Taxinc < 60000)
-  { Otheroff <- 0.004 * Taxinc
+  else if(TaxInc < 60000)
+  { Otheroff <- 0.004 * TaxInc
   return(Otheroff)}
-  else if(Taxinc < 70000)
-  { Otheroff <- 0.004 * Taxinc
+  else if(TaxInc < 70000)
+  { Otheroff <- 0.004 * TaxInc
   return(Otheroff)}
-  else if(Taxinc < 80000)
-  { Otheroff <- 0.004 * Taxinc
+  else if(TaxInc < 80000)
+  { Otheroff <- 0.004 * TaxInc
   return(Otheroff)}
-  else if(Taxinc < 90000)
-  { Otheroff <- 0.004 * Taxinc
+  else if(TaxInc < 90000)
+  { Otheroff <- 0.004 * TaxInc
   return(Otheroff)}
-  else if(Taxinc < 100000)
-  { Otheroff <- 0.004 * Taxinc
+  else if(TaxInc < 100000)
+  { Otheroff <- 0.004 * TaxInc
   return(Otheroff)}
-  else if(Taxinc < 150000)
-  { Otheroff <- 0.005 * Taxinc
+  else if(TaxInc < 150000)
+  { Otheroff <- 0.005 * TaxInc
   return(Otheroff)}
-  else if(Taxinc < 180000)
-  { Otheroff <- 0.006 * Taxinc
+  else if(TaxInc < 180000)
+  { Otheroff <- 0.006 * TaxInc
   return(Otheroff)}
-  else if(Taxinc < 250000)
-  { Otheroff <- 0.008 * Taxinc
+  else if(TaxInc < 250000)
+  { Otheroff <- 0.008 * TaxInc
   return(Otheroff)}
-  else if(Taxinc < 500000)
-  { Otheroff <- 0.008 * Taxinc
+  else if(TaxInc < 500000)
+  { Otheroff <- 0.008 * TaxInc
   return(Otheroff)}
-  else if(Taxinc < 1000000)
-  { Otheroff <- 0.005 * Taxinc
+  else if(TaxInc < 1000000)
+  { Otheroff <- 0.005 * TaxInc
   return(Otheroff)}
   else
-  { Otheroff <- 0.002 * Taxinc
+  { Otheroff <- 0.002 * TaxInc
   return(Otheroff)}
 }
 
@@ -211,7 +211,7 @@ return(Otheroff)}
 #' @export
 
 
-DEDfn <- function(RegInc = NULL) {if(RegInc < 6000)
+DEDfn <- function(RegInc = RegInc) {if(RegInc < 6000)
 { Deduct <- 0.118 * RegInc
 return(Deduct)}
   else if(RegInc < 10000)
@@ -277,4 +277,63 @@ return(Deduct)}
   else
   { Deduct <- 0.029 * RegInc
   return(Deduct)}
+}
+
+
+
+#' Super Tax Function
+#'
+#' Super Tax function for use on HIDLA, as part of the Income Tax Assesment
+#'
+#' @param Super_Inc Whole dollar value of super income
+#' @param Age The age of the tax payer
+#' @return A list
+#' @export
+
+SUPERTAXfn <- function(Super_Inc = Super_Inc, Age = Age) {
+  if (Super_Inc <  100697) {
+    Supertax <- 0
+  } else if(Super_Inc > 100696) {
+    if (Age > 59){
+      Supertax <- 0
+    } else if (Age < 55) {
+      if (Super_Inc %in% 80001:180000){
+        Supertax <- 0.37*Super_Inc
+      } else if (Super_Inc > 180000) {
+        Supertax <- 0.47*Super_Inc
+      }
+    } else if (Age %in% 55:58) {
+      if (Super_Inc %in% 80001:180000){
+        Supertax <- 0.22*Super_Inc
+      } else if (Super_Inc > 180000) {
+        Supertax <- 0.30*Super_Inc
+      }
+    }
+  }
+}
+
+
+#' Imputation Credits Function
+#'
+#' Imputation Credits function for use on HIDLA, as part of the Income Tax Assesment
+#'
+#' @param ShareDiv Whole dollar value of super income
+#' @param Citizenship Whole dollar value of super income
+#' @param InvestInc_p The age of the tax payer
+#' @return A list
+#' @export
+
+#Calculating imputation credits
+IMPfn <- function(ShareDiv = ShareDiv, Citizenship = Citizenship, InvestInc_p = InvestInc_p) {
+  if (Citizenship > 3) {
+    Impcred <- 0
+  }
+  else {
+    if (ShareDiv < 1) {
+      Impcred <- InvestInc_p*0.15
+    }
+    else {
+      Impcred <- ShareDiv*0.41
+    }
+  }
 }

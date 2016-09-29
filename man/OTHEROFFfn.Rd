@@ -4,7 +4,7 @@
 \alias{OTHEROFFfn}
 \title{Other Tax Offsets Function}
 \usage{
-OTHEROFFfn(Taxinc = NULL)
+OTHEROFFfn(TaxInc = TaxInc)
 }
 \arguments{
 \item{TaxInc}{Whole dollar value of taxable income}
