@@ -3,7 +3,7 @@
 #' This function combines all the nessesary income tax functions and data set mutations to be an all-in-one function for calculating Income Tax
 #'
 
-#'
+#' @name ysi_income_tax
 #' @param df Argument is intended to be a fresh HILDA data frame
 #' @return A data frame
 #' @export
@@ -56,16 +56,6 @@ ysi_tax_inc <- function(df = NULL) {
 
 
 
-#' Medicare Levy Function
-#'
-#' Medicare Levy  for use on HIDLA, as part of the Income Tax Assesment
-#' For use with sapply()
-#'
-#' Requires TaxInc (Taxable Income) variable to have been calulated previously
-#'
-#' @param TaxInc Whole dollar value of taxable income
-#' @return A vector
-
 
 
 MLfn<-function(TaxInc = TaxInc)  {if(TaxInc < 20542)
@@ -79,16 +69,6 @@ return(ML)}
   return(ML)}
 }
 
-#' Low Income Tax Offset (LITO) Function
-#'
-#' Low Income Tax Offset (LITO) for use on HIDLA, as part of the Income Tax Assesment
-#' For use with sapply()
-#'
-#' Requires TaxInc (Taxable Income) variable to have been calulated previously
-#'
-#' @param TaxInc Whole dollar value of taxable income
-#' @return A vector
-
 LITOfn<-function(TaxInc= TaxInc)  {if(TaxInc < 37000)
 {LITO <- 445
 return(LITO)}
@@ -99,17 +79,6 @@ return(LITO)}
   {LITO <- 0
   return(LITO)}
 }
-
-#' Mature Age Tax Offset (MATO) Function
-#'
-#' Mature Age Tax Offset (MATO) for use on HIDLA, as part of the Income Tax Assesment
-#' For use with mapply()
-#'
-#'
-#' @param WageIncImp_SalSac Whole dollar value of Wage income with salary sacrifice
-#' @param YoB The year of birth
-
-#' @return A vector
 
 
 MATOfn<-function(WageIncImp_SalSac= WageIncImp_SalSac, YoB= YoB)  {if(WageIncImp_SalSac < 10000)
@@ -126,16 +95,6 @@ return(MATO)}
   return(MATO)}
 }
 
-#' Seniors and Pensioners Tax Offset (SAPTO) Function
-#'
-#' Seniors and Pensioners Tax Offset (SAPTO) for use on HIDLA, as part of the Income Tax Assesment
-#' For use with sapply()
-#'
-#' Requires TaxInc (Taxable Income) variable to have been calulated previously
-#'
-#' @param TaxInc Whole dollar value of taxable income
-#' @return A vector
-
 SAPTOfn <-function(TaxInc = TaxInc) {if(TaxInc < 32279)
 {SAPTO <- 2230
 return(SAPTO)}
@@ -147,15 +106,6 @@ return(SAPTO)}
   return(SAPTO)}
 }
 
-#' Other Tax Offsets Function
-#'
-#' Other Tax Offsets Function for use on HIDLA, as part of the Income Tax Assesment
-#' For use with sapply()
-#'
-#' Requires TaxInc (Taxable Income) variable to have been calulated previously
-#'
-#' @param TaxInc Whole dollar value of taxable income
-#' @return A vector
 
 OTHEROFFfn <- function(TaxInc = TaxInc) {if(TaxInc < 6000)
 { Otheroff <- 0.003 * TaxInc
@@ -225,15 +175,7 @@ return(Otheroff)}
   return(Otheroff)}
 }
 
-#' Deductions Function
-#'
-#' Deductions Function for use on HIDLA, as part of the Income Tax Assesment
-#' For use with sapply()
-#'
-#' Requires TaxInc (Taxable Income) variable to have been calulated previously
-#'
-#' @param TaxInc Whole dollar value of taxable income
-#' @return A vector
+
 
 
 DEDfn <- function(RegInc = RegInc) {if(RegInc < 6000)
@@ -306,13 +248,7 @@ return(Deduct)}
 
 
 
-#' Super Tax Function
-#'
-#' Super Tax function for use on HIDLA, as part of the Income Tax Assesment
-#'
-#' @param Super_Inc Whole dollar value of super income
-#' @param Age The age of the tax payer
-#' @return A vector
+
 
 SUPERTAXfn <- function(Super_Inc = Super_Inc, Age = Age) {
   if (Super_Inc <  100697) {
@@ -337,16 +273,8 @@ SUPERTAXfn <- function(Super_Inc = Super_Inc, Age = Age) {
 }
 
 
-#' Imputation Credits Function
-#'
-#' Imputation Credits function for use on HIDLA, as part of the Income Tax Assesment
-#'
-#' @param ShareDiv
-#' @param Citizenship
-#' @param InvestInc_p
-#' @return A vector
 
-#Calculating imputation credits
+
 IMPfn <- function(ShareDiv = ShareDiv, Citizenship = Citizenship, InvestInc_p = InvestInc_p) {
   if (Citizenship > 3) {
     Impcred <- 0
