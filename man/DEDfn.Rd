@@ -4,7 +4,7 @@
 \alias{DEDfn}
 \title{Deductions Function}
 \usage{
-DEDfn(RegInc)
+DEDfn(RegInc = NULL)
 }
 \arguments{
 \item{TaxInc}{Whole dollar value of taxable income}

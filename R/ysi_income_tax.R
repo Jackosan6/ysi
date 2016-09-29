@@ -1,3 +1,30 @@
+#' YSI Income Tax Assesment Function
+#'
+#' This function combines all the nessesary income tax functions and data set mutations to be an all-in-one function for calculating Income Tax
+#'
+#' It generates the following, which are mostly a sum of the posative and negative HILDA variables:
+#'
+#' House Income (HouseInc)
+#' Total Individual Income (TotalIncome)
+#' Regular Individual Income (RegInc)
+#' HouseHold level combined Assets (Assets)
+#' Idividual Net Rent (NetRent)
+#'
+#' @param df Argument is intended to be a fresh HILDA data frame
+#' @return A data frame
+#' @export
+
+ysi_income_tax <- function(df= NULL) {
+  temp <- ysi_mutate_combine(df)
+  temp$Deduct <- sapply(temp$RegInc, DEDfn)
+
+
+
+  return(temp)
+}
+
+
+
 #' Medicare Levy Function
 #'
 #' Medicare Levy  for use on HIDLA, as part of the Income Tax Assesment
@@ -184,7 +211,7 @@ return(Otheroff)}
 #' @export
 
 
-DEDfn <- function(RegInc) {if(RegInc < 6000)
+DEDfn <- function(RegInc = NULL) {if(RegInc < 6000)
 { Deduct <- 0.118 * RegInc
 return(Deduct)}
   else if(RegInc < 10000)
