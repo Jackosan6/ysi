@@ -7,13 +7,6 @@
 IMPfn(ShareDiv = ShareDiv, Citizenship = Citizenship,
   InvestInc_p = InvestInc_p)
 }
-\arguments{
-\item{ShareDiv}{Whole dollar value of super income}
-
-\item{Citizenship}{Whole dollar value of super income}
-
-\item{InvestInc_p}{The age of the tax payer}
-}
 \value{
 A list
 }

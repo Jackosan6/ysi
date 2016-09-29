@@ -2,6 +2,26 @@
 #'
 #' This function combines all the nessesary income tax functions and data set mutations to be an all-in-one function for calculating Income Tax
 #'
+
+#'
+#' @param df Argument is intended to be a fresh HILDA data frame
+#' @return A data frame
+#' @export
+
+ysi_income_tax <- function(df= NULL) {
+  temp <- ysi_mutate_combine(df)
+  temp$Deduct <- sapply(temp$RegInc, DEDfn)
+  temp <- ysi_tax_inc_mut(temp)
+
+
+  return(temp)
+}
+
+
+#' YSI Taxable Income Standalone Function
+#'
+#' This function combines all the nessesary income tax functions and data set mutations to be an all-in-one function for calculating Income Tax
+#'
 #' It generates the following, which are mostly a sum of the posative and negative HILDA variables:
 #'
 #' House Income (HouseInc)
@@ -14,10 +34,10 @@
 #' @return A data frame
 #' @export
 
-ysi_income_tax <- function(df= NULL) {
+ysi_tax_inc <- function(df= NULL) {
   temp <- ysi_mutate_combine(df)
   temp$Deduct <- sapply(temp$RegInc, DEDfn)
-  temp <- ysi_tax_inc(temp)
+  temp <- ysi_tax_inc_mut(temp)
 
 
   return(temp)
@@ -38,7 +58,7 @@ ysi_income_tax <- function(df= NULL) {
 
 
 
-MLfn<-function(TaxInc = NULL)  {if(TaxInc < 20542)
+MLfn<-function(TaxInc = TaxInc)  {if(TaxInc < 20542)
 {ML <- 0
 return(ML)}
   else if(TaxInc < 24167)
@@ -60,7 +80,7 @@ return(ML)}
 #' @return A list
 #' @export
 
-LITOfn<-function(TaxInc= NULL)  {if(TaxInc < 37000)
+LITOfn<-function(TaxInc= TaxInc)  {if(TaxInc < 37000)
 {LITO <- 445
 return(LITO)}
   else if(TaxInc < 66667)
@@ -317,9 +337,9 @@ SUPERTAXfn <- function(Super_Inc = Super_Inc, Age = Age) {
 #'
 #' Imputation Credits function for use on HIDLA, as part of the Income Tax Assesment
 #'
-#' @param ShareDiv Whole dollar value of super income
-#' @param Citizenship Whole dollar value of super income
-#' @param InvestInc_p The age of the tax payer
+#' @param ShareDiv
+#' @param Citizenship
+#' @param InvestInc_p
 #' @return A list
 #' @export
 
