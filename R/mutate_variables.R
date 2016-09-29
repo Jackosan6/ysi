@@ -24,7 +24,29 @@ ysi_mutate_combine <- function(df= NULL) {
 }
 
 
-tempfunc <- function(x) {
+#' YSI Taxable Income Standalone Function
+#'
+#' This function just finds taxable income.
+#'
+#' @param df Argument is intended to be a fresh HILDA data frame
+#' @return A data frame
+#' @export
 
+ysi_tax_inc <- function(df = NULL) {
+  temp <- ysi_mutate_combine(df)
+  temp$Deduct <- sapply(temp$RegInc, DEDfn)
+  temp <- ysi_tax_inc_mut(temp)
+
+  return(temp)
+}
+
+
+
+
+
+
+ysi_tax_inc_mut <- function(df = NULL) {
+
+  mutate(df, TaxInc=RegInc-Super_Inc-PrivTran-PubTransImp-ScholarshipsImp-SalSac_MainImp*52-SalSac_OtherImp*52-Deduct)
 
 }

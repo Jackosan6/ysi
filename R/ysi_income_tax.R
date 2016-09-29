@@ -10,13 +10,36 @@
 
 ysi_income_tax <- function(df = NULL) {
   temp <- ysi_mutate_combine(df)
-  temp$Deduct <- sapply(temp$RegInc, DEDfn)
-  temp <- ysi_tax_inc_mut(temp)
-  # temp$Supertax <- mapply(SUPERTAXfn, temp$Super_Inc, temp$Age)
-  # temp$Supertax[is.na(temp$Supertax)] <- 0
+
+  # Convert Imput Cred variables
+  temp$ShareDiv <- as.numeric(temp$ShareDiv)
+  temp$ShareDiv[is.na(temp$ShareDiv)] <- 0
+  temp$Citizenship[is.na(temp$Citizenship)] <- 0
+
+  # Main Function steps
+  temp <- temp %>% mutate(Deduct = sapply(temp$RegInc, DEDfn),
+                          TaxInc=RegInc-Super_Inc-PrivTran-PubTransImp-ScholarshipsImp-SalSac_MainImp*52-SalSac_OtherImp*52-Deduct,
+                          Supertax = mapply(SUPERTAXfn, temp$Super_Inc, temp$Age),
+                          RegInctax = sapply(temp$TaxInc, RegIncTAXfn),
+                          RegInctaxchange = sapply(temp$TaxInc, RegIncTAXchangefn),
+                          Ml = sapply(Hilda2$Taxinc, MLfn))
+
+
+
+  temp$Supertax[is.na(temp$Supertax)] <- 0
 
   return(temp)
 }
+
+
+
+
+
+
+
+
+
+# hidden functions
 
 
 #' YSI Taxable Income Standalone Function
@@ -43,7 +66,10 @@ RegIncTAXfn <- function(income = NULL,brackets=c(18200, 37000, 80000, 180000,Inf
 }
 
 
-
+RegIncTAXchangefn <- function(income,brackets=c(35000, 60000, 180000,Inf),
+                              rates=c(0,.15,.35,.45)){
+  sum(diff(c(0,pmin(income,brackets)))*rates)
+}
 
 
 ysi_tax_inc_mut <- function(df = NULL) {
