@@ -8,12 +8,12 @@
 #' @return A data frame
 #' @export
 
-ysi_income_tax <- function(df= NULL) {
+ysi_income_tax <- function(df = NULL) {
   temp <- ysi_mutate_combine(df)
-  temp$Deduct <- mapply(temp, DEDfn)
+  temp$Deduct <- sapply(temp, DEDfn)
   temp <- ysi_tax_inc_mut(temp)
-  temp$Supertax <- mapply(SUPERTAXfn, temp$Super_Inc, temp$Age)
-  temp$Supertax[is.na(temp$Supertax)] <- 0
+  # temp$Supertax <- mapply(SUPERTAXfn, temp$Super_Inc, temp$Age)
+  # temp$Supertax[is.na(temp$Supertax)] <- 0
 
   return(temp)
 }
