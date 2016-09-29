@@ -3,9 +3,9 @@
 #' Medicare Levy  for use on HIDLA, as part of the Income Tax Assesment
 #' For use with sapply()
 #'
-#' Requires TaxInc variable to have been calulated previously
+#' Requires TaxInc (Taxable Income) variable to have been calulated previously
 #'
-#' @param Super_Inc Whole dollar value of super income
+#' @param TaxInc Whole dollar value of taxable income
 #' @return A list
 #' @export
 
@@ -27,9 +27,9 @@ return(ML)}
 #' Low Income Tax Offset (LITO) for use on HIDLA, as part of the Income Tax Assesment
 #' For use with sapply()
 #'
-#' Requires TaxInc variable to have been calulated previously
+#' Requires TaxInc (Taxable Income) variable to have been calulated previously
 #'
-#' @param Super_Inc Whole dollar value of super income
+#' @param TaxInc Whole dollar value of taxable income
 #' @return A list
 #' @export
 
@@ -69,4 +69,185 @@ return(MATO)}
   else
   {MATO <- 0
   return(MATO)}
+}
+
+#' Seniors and Pensioners Tax Offset (SAPTO) Function
+#'
+#' Seniors and Pensioners Tax Offset (SAPTO) for use on HIDLA, as part of the Income Tax Assesment
+#' For use with sapply()
+#'
+#' Requires TaxInc (Taxable Income) variable to have been calulated previously
+#'
+#' @param TaxInc Whole dollar value of taxable income
+#' @return A list
+#' @export
+
+SAPTOfn <-function(Taxinc = NULL) {if(Taxinc < 32279)
+{SAPTO <- 2230
+return(SAPTO)}
+  else if(Taxinc < 50119)
+  {SAPTO <- 2230 - 0.125*(Taxinc - 32279)
+  return(SAPTO)}
+  else
+  {SAPTO <- 0
+  return(SAPTO)}
+}
+
+#' Other Tax Offsets Function
+#'
+#' Other Tax Offsets Function for use on HIDLA, as part of the Income Tax Assesment
+#' For use with sapply()
+#'
+#' Requires TaxInc (Taxable Income) variable to have been calulated previously
+#'
+#' @param TaxInc Whole dollar value of taxable income
+#' @return A list
+#' @export
+
+OTHEROFFfn <- function(Taxinc = NULL) {if(Taxinc < 6000)
+{ Otheroff <- 0.003 * Taxinc
+return(Otheroff)}
+  else if(Taxinc < 10000)
+  { Otheroff <- 0.002 * Taxinc
+  return(Otheroff)}
+  else if(Taxinc < 15000)
+  { Otheroff <- 0.002 * Taxinc
+  return(Otheroff)}
+  else if(Taxinc < 20000)
+  { Otheroff <- 0.006 * Taxinc
+  return(Otheroff)}
+  else if(Taxinc < 25000)
+  { Otheroff <- 0.007 * Taxinc
+  return(Otheroff)}
+  else if(Taxinc < 30000)
+  { Otheroff <- 0.006 * Taxinc
+  return(Otheroff)}
+  else if(Taxinc < 35000)
+  { Otheroff <- 0.007 * Taxinc
+  return(Otheroff)}
+  else if(Taxinc < 40000)
+  { Otheroff <- 0.006 * Taxinc
+  return(Otheroff)}
+  else if(Taxinc < 45000)
+  { Otheroff <- 0.006 * Taxinc
+  return(Otheroff)}
+  else if(Taxinc < 50000)
+  { Otheroff <- 0.005 * Taxinc
+  return(Otheroff)}
+  else if(Taxinc < 55000)
+  { Otheroff <- 0.005 * Taxinc
+  return(Otheroff)}
+  else if(Taxinc < 60000)
+  { Otheroff <- 0.004 * Taxinc
+  return(Otheroff)}
+  else if(Taxinc < 70000)
+  { Otheroff <- 0.004 * Taxinc
+  return(Otheroff)}
+  else if(Taxinc < 80000)
+  { Otheroff <- 0.004 * Taxinc
+  return(Otheroff)}
+  else if(Taxinc < 90000)
+  { Otheroff <- 0.004 * Taxinc
+  return(Otheroff)}
+  else if(Taxinc < 100000)
+  { Otheroff <- 0.004 * Taxinc
+  return(Otheroff)}
+  else if(Taxinc < 150000)
+  { Otheroff <- 0.005 * Taxinc
+  return(Otheroff)}
+  else if(Taxinc < 180000)
+  { Otheroff <- 0.006 * Taxinc
+  return(Otheroff)}
+  else if(Taxinc < 250000)
+  { Otheroff <- 0.008 * Taxinc
+  return(Otheroff)}
+  else if(Taxinc < 500000)
+  { Otheroff <- 0.008 * Taxinc
+  return(Otheroff)}
+  else if(Taxinc < 1000000)
+  { Otheroff <- 0.005 * Taxinc
+  return(Otheroff)}
+  else
+  { Otheroff <- 0.002 * Taxinc
+  return(Otheroff)}
+}
+
+#' Deductions Function
+#'
+#' Deductions Function for use on HIDLA, as part of the Income Tax Assesment
+#' For use with sapply()
+#'
+#' Requires TaxInc (Taxable Income) variable to have been calulated previously
+#'
+#' @param TaxInc Whole dollar value of taxable income
+#' @return A list
+#' @export
+
+
+DEDfn <- function(RegInc) {if(RegInc < 6000)
+{ Deduct <- 0.118 * RegInc
+return(Deduct)}
+  else if(RegInc < 10000)
+  { Deduct <- 0.059 * RegInc
+  return(Deduct)}
+  else if(RegInc < 15000)
+  { Deduct <- 0.049 * RegInc
+  return(Deduct)}
+  else if(RegInc < 20000)
+  { Deduct <- 0.059 * RegInc
+  return(Deduct)}
+  else if(RegInc < 25000)
+  { Deduct <- 0.056 * RegInc
+  return(Deduct)}
+  else if(RegInc < 30000)
+  { Deduct <- 0.054 * RegInc
+  return(Deduct)}
+  else if(RegInc < 35000)
+  { Deduct <- 0.053 * RegInc
+  return(Deduct)}
+  else if(RegInc < 40000)
+  { Deduct <- 0.051 * RegInc
+  return(Deduct)}
+  else if(RegInc < 45000)
+  { Deduct <- 0.048 * RegInc
+  return(Deduct)}
+  else if(RegInc < 50000)
+  { Deduct <- 0.048 * RegInc
+  return(Deduct)}
+  else if(RegInc < 55000)
+  { Deduct <- 0.047 * RegInc
+  return(Deduct)}
+  else if(RegInc < 60000)
+  { Deduct <- 0.047 * RegInc
+  return(Deduct)}
+  else if(RegInc < 70000)
+  { Deduct <- 0.047 * RegInc
+  return(Deduct)}
+  else if(RegInc < 80000)
+  { Deduct <- 0.047 * RegInc
+  return(Deduct)}
+  else if(RegInc < 90000)
+  { Deduct <- 0.046 * RegInc
+  return(Deduct)}
+  else if(RegInc < 100000)
+  { Deduct <- 0.043 * RegInc
+  return(Deduct)}
+  else if(RegInc < 150000)
+  { Deduct <- 0.042 * RegInc
+  return(Deduct)}
+  else if(RegInc < 180000)
+  { Deduct <- 0.042 * RegInc
+  return(Deduct)}
+  else if(RegInc < 250000)
+  { Deduct <- 0.042 * RegInc
+  return(Deduct)}
+  else if(RegInc < 500000)
+  { Deduct <- 0.042 * RegInc
+  return(Deduct)}
+  else if(RegInc < 1000000)
+  { Deduct <- 0.036 * RegInc
+  return(Deduct)}
+  else
+  { Deduct <- 0.029 * RegInc
+  return(Deduct)}
 }
