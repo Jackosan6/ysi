@@ -7,7 +7,7 @@
 MLfn(Taxinc = NULL)
 }
 \arguments{
-\item{Super_Inc}{Whole dollar value of super income}
+\item{TaxInc}{Whole dollar value of taxable income}
 }
 \value{
 A list
@@ -17,6 +17,6 @@ Medicare Levy  for use on HIDLA, as part of the Income Tax Assesment
 For use with sapply()
 }
 \details{
-Requires TaxInc variable to have been calulated previously
+Requires TaxInc (Taxable Income) variable to have been calulated previously
 }
 
