@@ -2,19 +2,20 @@
 % Please edit documentation in R/SUPERTAXfn.R
 \name{SUPERTAXfn}
 \alias{SUPERTAXfn}
-\title{Super Tax part of Income Tax}
+\title{Super Tax Function}
 \usage{
 SUPERTAXfn(Super_Inc, Age)
 }
 \arguments{
 \item{Super_Inc}{Whole dollar value of super income}
 
-\item{Age}{An interger of the age of the tax payer}
+\item{Age}{The age of the tax payer}
 }
 \value{
 A list
 }
 \description{
-Super Tax Based on Super income and age, for apply to HILDA for Income tax calculation
+Super Tax function for use on HIDLA, as part of the Income Tax Assesment
+For use with mapply()
 }
 

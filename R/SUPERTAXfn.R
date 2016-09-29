@@ -1,9 +1,10 @@
-#' Super Tax part of Income Tax
+#' Super Tax Function
 #'
-#' Super Tax Based on Super income and age, for apply to HILDA for Income tax calculation
+#' Super Tax function for use on HIDLA, as part of the Income Tax Assesment
+#' For use with mapply()
 #'
 #' @param Super_Inc Whole dollar value of super income
-#' @param Age An interger of the age of the tax payer
+#' @param Age The age of the tax payer
 #' @return A list
 #' @export
 
