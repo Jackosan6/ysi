@@ -1,6 +1,6 @@
 #' ysi Mutate_combine Function
 #'
-#' This function mutates multiple useful and commonly used variables for YSI analysis as part of Income Tax Assesment
+#' This function mutates multiple useful and commonly used variables for YSI analysis.
 #'
 #' It generates the following, which are mostly a sum of the posative and negative HILDA variables:
 #'
@@ -38,6 +38,6 @@ ysi_mutate_combine <- function(df= NULL) {
 
 ysi_tax_inc <- function(df = NULL) {
 
-  mutate(df, Taxinc=RegInc-Super_Inc-PrivTran-PubTransImp-ScholarshipsImp-SalSac_MainImp*52-SalSac_OtherImp*52-Deduct)
+  mutate(df, TaxInc=RegInc-Super_Inc-PrivTran-PubTransImp-ScholarshipsImp-SalSac_MainImp*52-SalSac_OtherImp*52-Deduct)
 
 }

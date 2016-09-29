@@ -17,7 +17,7 @@
 ysi_income_tax <- function(df= NULL) {
   temp <- ysi_mutate_combine(df)
   temp$Deduct <- sapply(temp$RegInc, DEDfn)
-
+  temp <- ysi_tax_inc(temp)
 
 
   return(temp)

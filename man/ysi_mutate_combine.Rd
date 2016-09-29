@@ -13,7 +13,7 @@ ysi_mutate_combine(df = NULL)
 A data frame
 }
 \description{
-This function mutates multiple useful and commonly used variables for YSI analysis as part of Income Tax Assesment
+This function mutates multiple useful and commonly used variables for YSI analysis.
 }
 \details{
 It generates the following, which are mostly a sum of the posative and negative HILDA variables:
