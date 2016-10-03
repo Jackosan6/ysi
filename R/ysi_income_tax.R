@@ -22,7 +22,7 @@ ysi_income_tax <- function(df = NULL) {
                           Supertax = mapply(SUPERTAXfn, temp$Super_Inc, temp$Age),
                           RegInctax = sapply(temp$TaxInc, RegIncTAXfn),
                           RegInctaxchange = sapply(temp$TaxInc, RegIncTAXchangefn),
-                          Ml = sapply(Hilda2$Taxinc, MLfn))
+                          Ml = sapply(temp$Taxinc, MLfn))
 
 
 
