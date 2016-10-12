@@ -4,10 +4,12 @@
 \alias{ysi_income_tax}
 \title{YSI Income Tax Assesment Function}
 \usage{
-ysi_income_tax(df = NULL)
+ysi_income_tax(df = NULL, fyear = "2013-14")
 }
 \arguments{
 \item{df}{Argument is intended to be a fresh HILDA data frame}
+
+\item{fyear}{Argument is intended to be the financial year of interest}
 }
 \value{
 A data frame

@@ -5,10 +5,11 @@
 
 #' @name ysi_income_tax
 #' @param df Argument is intended to be a fresh HILDA data frame
+#' @param fyear Argument is intended to be the financial year of interest
 #' @return A data frame
 #' @export
 
-ysi_income_tax <- function(df = NULL) {
+ysi_income_tax <- function(df = NULL, fyear = "2013-14") {
   temp <- ysi_mutate_combine(df)
 
   # Convert Imput Cred variables
@@ -21,7 +22,7 @@ ysi_income_tax <- function(df = NULL) {
                           TaxInc=RegInc-Super_Inc-PrivTran-PubTransImp-ScholarshipsImp-SalSac_MainImp*52-SalSac_OtherImp*52-Deduct)
 
   temp <- temp %>% mutate(Supertax = mapply(SUPERTAXfn, temp$Super_Inc, temp$Age),
-                          RegInctax = sapply(temp$TaxInc, income_tax_rates_func),
+                          RegInctax = mapply( income_tax_rates_func, income = temp$TaxInc, fyear = fyear),
                           Ml = sapply(temp$TaxInc, MLfn))
 
 
