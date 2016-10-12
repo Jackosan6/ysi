@@ -39,7 +39,6 @@ ysi_income_tax <- function(df = NULL) {
 
 
 
-# hidden functions
 
 
 #' YSI Taxable Income Standalone Function
@@ -58,6 +57,9 @@ ysi_tax_inc <- function(df = NULL) {
   return(temp)
 }
 
+
+
+# hidden functions
 
 
 RegIncTAXfn <- function(income = NULL,brackets=c(18200, 37000, 80000, 180000,Inf),

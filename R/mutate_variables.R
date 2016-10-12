@@ -51,16 +51,3 @@ ysi_tax_inc_mut <- function(df = NULL) {
 
 }
 
-#' YSI test func
-#'
-#' This function just finds taxable income.
-#'
-#' @param x and integer
-#' @return An element
-#' @export
-
-
-new_func <- function(x = x) {
-  y  <- x^2
-  return(y)
-}

@@ -22,6 +22,6 @@ write.table(income_tax_rates_tbl, "./data/income_tax_rates_tbl.tsv", row.names =
 # package data into ysi
 use_data(lito_tbl, sapto_tbl, medicare_tbl, income_tax_rates_tbl,
 
-         internal = T, overwrite =  T)
+         internal = T, overwrite =  T) # If changing internal to FALSE then back to TRUE delete the rda files
 
 
