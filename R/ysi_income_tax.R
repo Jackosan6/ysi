@@ -22,7 +22,7 @@ ysi_income_tax <- function(df = NULL, fyear = "2013-14") {
                           TaxInc=RegInc-Super_Inc-PrivTran-PubTransImp-ScholarshipsImp-SalSac_MainImp*52-SalSac_OtherImp*52-Deduct)
 
   temp <- temp %>% mutate(Supertax = mapply(SUPERTAXfn, temp$Super_Inc, temp$Age),
-                          RegInctax = mapply( income_tax_rates_func, income = temp$TaxInc, fyear = fyear),
+                          RegInctax = sapply(income_tax_rates_func, income = temp$TaxInc, year = fyear), # This line is worng, use sapply?
                           Ml = sapply(temp$TaxInc, MLfn))
 
 
@@ -71,10 +71,10 @@ ysi_tax_inc <- function(df = NULL) {
 #' @return A vector
 #' @export
 
-income_tax_rates_func <- function(income = NULL, fyear = "2013-14") {
+income_tax_rates_func <- function(income = NULL, year = "2013-14") {
 
   temp <- income_tax_rates_tbl %>%
-    filter(fyear == fyear)
+    filter(fyear == year)
   sum(diff(c(0,pmin(income,temp$upper_bracket)))*temp$marginal_rate)
 
 }

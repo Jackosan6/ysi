@@ -4,7 +4,7 @@
 \alias{income_tax_rates_func}
 \title{YSI Applied Income Tax Rates Function}
 \usage{
-income_tax_rates_func(income = NULL, fyear = "2013-14")
+income_tax_rates_func(income = NULL, year = "2013-14")
 }
 \arguments{
 \item{income}{A numeric vector of income ($)}
