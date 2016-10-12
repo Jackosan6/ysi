@@ -6,4 +6,4 @@ Authors: R Ireland <rosseireland@gmail.com>
 Description: Function Library inclduing sume dependent tables
 License: MIT
 LazyData: TRUE
-RoxygenNote: 5.0.1.9000
+RoxygenNote: 5.0.1
