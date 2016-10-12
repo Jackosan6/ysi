@@ -61,17 +61,23 @@ ysi_tax_inc <- function(df = NULL) {
 
 # hidden functions
 
+#' YSI Applied Income Tax Rates Function
+#'
+#' Can be used on taxable income (TaxInc) or another income source that uses marginal income tax rates
+#'
+#' @param income A numeric vector of income ($)
+#' @param fyear The finanical year of interest, in the form "2013-14"
+#' @return A vector
+#' @export
 
-RegIncTAXfn <- function(income = NULL,brackets=c(18200, 37000, 80000, 180000,Inf),
-                        rates=c(0,.19,.325,.37,.45)){
-  sum(diff(c(0,pmin(income,brackets)))*rates)
+income_tax_rates_func <- function(income = NULL, fyear = "2013-14") {
+
+  temp <- income_tax_rates_tbl %>%
+    filter(fyear == fyear)
+  sum(diff(c(0,pmin(income,temp$upper_bracket)))*temp$marginal_rate)
+
 }
 
-
-RegIncTAXchangefn <- function(income,brackets=c(35000, 60000, 180000,Inf),
-                              rates=c(0,.15,.35,.45)){
-  sum(diff(c(0,pmin(income,brackets)))*rates)
-}
 
 
 ysi_tax_inc_mut <- function(df = NULL) {

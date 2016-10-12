@@ -24,4 +24,7 @@ use_data(lito_tbl, sapto_tbl, medicare_tbl, income_tax_rates_tbl,
 
          internal = T, overwrite =  T) # If changing internal to FALSE then back to TRUE delete the rda files
 
+income_tax_rates_tbl <- read.csv("./data/income_tax_rates_tbl.csv", header = T)
 
+
+write.csv(income_tax_rates_tbl, "./data/income_tax_rates_tbl.csv", row.names = F)
