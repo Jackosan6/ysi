@@ -18,12 +18,11 @@ ysi_income_tax <- function(df = NULL) {
 
   # Main Function steps
   temp <- temp %>% mutate(Deduct = sapply(temp$RegInc, DEDfn),
-                          TaxInc=RegInc-Super_Inc-PrivTran-PubTransImp-ScholarshipsImp-SalSac_MainImp*52-SalSac_OtherImp*52-Deduct,
-                          Supertax = mapply(SUPERTAXfn, temp$Super_Inc, temp$Age),
-                          RegInctax = sapply(temp$TaxInc, RegIncTAXfn),
-                          RegInctaxchange = sapply(temp$TaxInc, RegIncTAXchangefn),
-                          Ml = sapply(temp$Taxinc, MLfn))
+                          TaxInc=RegInc-Super_Inc-PrivTran-PubTransImp-ScholarshipsImp-SalSac_MainImp*52-SalSac_OtherImp*52-Deduct)
 
+  temp <- temp %>% mutate(Supertax = mapply(SUPERTAXfn, temp$Super_Inc, temp$Age),
+                          RegInctax = sapply(temp$TaxInc, income_tax_rates_func),
+                          Ml = sapply(temp$TaxInc, MLfn))
 
 
   temp$Supertax[is.na(temp$Supertax)] <- 0
