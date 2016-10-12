@@ -63,7 +63,8 @@ ysi_tax_inc <- function(df = NULL) {
 
 #' YSI Applied Income Tax Rates Function
 #'
-#' Can be used on taxable income (TaxInc) or another income source that uses marginal income tax rates
+#' Can be used on taxable income (TaxInc) or another income source that uses marginal income tax rates.
+#' Previously called RegIncTAXfn()
 #'
 #' @param income A numeric vector of income ($)
 #' @param fyear The finanical year of interest, in the form "2013-14"
