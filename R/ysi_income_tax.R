@@ -19,10 +19,10 @@ ysi_income_tax <- function(df = NULL, fyear = "2013-14") {
 
   # Main Function steps
   temp <- temp %>% mutate(Deduct = sapply(temp$RegInc, DEDfn),
-                          TaxInc=RegInc-Super_Inc-PrivTran-PubTransImp-ScholarshipsImp-SalSac_MainImp*52-SalSac_OtherImp*52-Deduct)
+                          TaxInc = RegInc-Super_Inc-PrivTran-PubTransImp-ScholarshipsImp-SalSac_MainImp*52-SalSac_OtherImp*52-Deduct)
 
   temp <- temp %>% mutate(Supertax = mapply(SUPERTAXfn, temp$Super_Inc, temp$Age),
-                          RegInctax = sapply(income_tax_rates_func, income = temp$TaxInc, year = fyear), # This line is worng, use sapply?
+                          RegInctax = mapply(income_tax_rates_func, income = temp$TaxInc, year = "2013-14"),
                           Ml = sapply(temp$TaxInc, MLfn))
 
 
@@ -30,13 +30,6 @@ ysi_income_tax <- function(df = NULL, fyear = "2013-14") {
 
   return(temp)
 }
-
-
-
-
-
-
-
 
 
 
@@ -59,15 +52,18 @@ ysi_tax_inc <- function(df = NULL) {
 
 
 
-# hidden functions
+
 
 #' YSI Applied Income Tax Rates Function
 #'
 #' Can be used on taxable income (TaxInc) or another income source that uses marginal income tax rates.
 #' Previously called RegIncTAXfn()
 #'
+#' To model a new set of rates and thresholds use income_tax_model_func()
+#' From cross wave use income_tax_rates_func_xwave()
+#'
 #' @param income A numeric vector of income ($)
-#' @param fyear The finanical year of interest, in the form "2013-14"
+#' @param fyear The finanical year of interest, in the form "2013-14", a single element or vector. To model tax changes add your model in to the table income_tax_rates_tbl.tsv and and replace the fyear coloum with a model name
 #' @return A vector
 #' @export
 
@@ -75,11 +71,12 @@ income_tax_rates_func <- function(income = NULL, year = "2013-14") {
 
   temp <- income_tax_rates_tbl %>%
     filter(fyear == year)
+
   sum(diff(c(0,pmin(income,temp$upper_bracket)))*temp$marginal_rate)
 
 }
 
-
+# hidden functions
 
 ysi_tax_inc_mut <- function(df = NULL) {
 
