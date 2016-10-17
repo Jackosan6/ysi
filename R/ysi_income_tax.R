@@ -9,7 +9,7 @@
 #' @export
 
 ysi_income_tax <- function(df = NULL) {
-  temp <- ysi_mutate_combine(xwave_samp)
+  temp <- ysi_mutate_combine(df)
 
   temp <- temp %>% mutate(
     # Varibles for Imput Credits
