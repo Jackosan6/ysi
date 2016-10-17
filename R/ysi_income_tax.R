@@ -12,38 +12,43 @@
 ysi_income_tax <- function(df = NULL, fin_year = "2013-14") {
   temp <- ysi_mutate_combine(df)
 
-  # Convert Imput Cred variables
-  temp$ShareDiv <- as.numeric(temp$ShareDiv)
-  temp$ShareDiv[is.na(temp$ShareDiv)] <- 0
-  temp$Citizenship[is.na(temp$Citizenship)] <- 0
-
-  # Main Function steps
-  temp <- temp %>% mutate(
-    Deduct = sapply(temp$RegInc, DEDfn),
-    TaxInc = RegInc-Super_Inc-PrivTran-PubTransImp-ScholarshipsImp-SalSac_MainImp*52-SalSac_OtherImp*52-Deduct
-    )
-
-  print(paste("Summary of Taxable Income"))
-  print(summary(temp$TaxInc))
-
 
   temp <- temp %>% mutate(
-    Supertax = mapply(SUPERTAXfn, temp$Super_Inc, temp$Age),
-    RegInctax = mapply(income_tax_rates_func, income = temp$TaxInc, year = as.character(temp$Wave_year))
-    )
+    # Varibles for Imput Credits
+    ShareDiv = ifelse(is.na(ShareDiv), 0, ShareDiv),
+    Citizenship = ifelse(is.na(Citizenship), 0, ShareDiv),
+    # Income tax assessment
+    Deduct = mapply(DEDfn,.$RegInc),
+    TaxInc = RegInc-Super_Inc-PrivTran-PubTransImp-ScholarshipsImp-SalSac_MainImp*52-SalSac_OtherImp*52-Deduct,
+    TaxInc = ifelse(is.na(TaxInc), 0, TaxInc),
+    Supertax = mapply(SUPERTAXfn, .$Super_Inc, .$Age),
+    RegInctax = mapply(income_tax_rates_func, income = .$TaxInc, year = as.character(.$Wave_year)),
+    WageIncImp_SalSac = ifelse(is.na(WageIncImp_SalSac), 0, WageIncImp_SalSac),
+    Supertax = ifelse(is.na(Supertax), 0, Supertax),
+    # Offsets
+    Ml = sapply(.$TaxInc, MLfn),
+    Ml = ifelse(is.na(Ml), 0, Ml),
+    LITO = sapply(.$TaxInc, LITOfn),
+    LITO = ifelse(is.na(LITO), 0, LITO),
+    Sapto = ifelse(.$Age<65,0,sapply(.$TaxInc,SAPTOfn)),
+    Sapto = ifelse(is.na(Sapto), 0, Sapto),
+    Mato = ifelse(.$YoB>1957,0,sapply(.$WageIncImp_SalSac,MATOfn)),
+    Mato = ifelse(is.na(Mato), 0, Mato),
+    Otheroff =ifelse(.$TaxInc < 0,0, sapply(.$TaxInc, OTHEROFFfn)),
+    Otheroff = ifelse(is.na(Otheroff), 0, Otheroff),
+    Totaloff = (.$LITO + .$Sapto + .$Mato + .$Otheroff),
+    Totaloff = ifelse(is.na(Totaloff), 0, Totaloff),
+    # Other
+    Impcred = ifelse(.$YoB>1957,0, mapply(IMPfn, .$ShareDiv,.$Citizenship,)),
+    Impcred = ifelse(is.na(Impcred), 0, Impcred),
+    Redtax = mapply(REDTAXfn, .$RedundancyImp,.$Age),
+    Redtax = ifelse(is.na(Redtax), 0, Redtax),
+    # Tax Totals
+    YSITotalIncTax_preIC = (Hilda2$RegInctax+Hilda2$Ml-Hilda2$Totaloff ),
+    YSITotalIncTax_preIC = ifelse(YSITotalIncTax_preIC<0,0,YSITotalIncTax_preIC),
+    YSI_Income_Tax = .$YSITotalIncTax_preIC - .$Impcred + .$Redtax + .$Supertax
 
-  print(paste("Summary of Income Tax"))
-  print(summary(temp$RegInctax))
-#
-#   temp <- temp %>% mutate(
-#
-#   )
-
-
-
-
-  temp$Supertax[is.na(temp$Supertax)] <- 0
-
+  )
   return(temp)
 }
 
@@ -104,6 +109,7 @@ income_tax_rates_func <- function(income = NULL, year = NULL) {
 
 income_tax_model_func <- function(df = Null, Model_name = NULL) {
   df$Model_nam <- "2016-17"
+
   df <- df %>% mutate(
     Model_tax = mapply(income_tax_rates_func, income = df$TaxInc, year = df$Model_nam)
   )
@@ -141,6 +147,24 @@ return(LITO)}
   else
   {LITO <- 0
   return(LITO)}
+}
+
+REDTAXfn <- function(RedundancyImp, Age) {
+  if (RedundancyImp <=  180000) {
+    Redtax <- 0
+  } else if(RedundancyImp %in% 180001:195000) {
+    if (Age < 55){
+      Redtax <- 0.315*RedundancyImp
+    } else {
+      Redtax <- 0.165*RedundancyImp
+    }
+  } else if(RedundancyImp > 195000) {
+    if (Age < 55) {
+      Redtax <- (0.315*15000) + 0.465*(RedundancyImp-195000)
+    } else {
+      Redtax <- (0.165*15000) + 0.465*(RedundancyImp-195000)
+    }
+  }
 }
 
 
