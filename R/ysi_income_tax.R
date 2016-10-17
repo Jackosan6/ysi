@@ -85,10 +85,10 @@ ysi_tax_inc <- function(df = NULL) {
 
 income_tax_rates_func <- function(income = NULL, year = NULL) {
 
-  temp <- income_tax_rates_tbl %>%
+  rates <- income_tax_rates_tbl %>%
     filter(fyear == year)
 
-  sum(diff(c(0,pmin(income,temp$upper_bracket)))*temp$marginal_rate)
+  sum(diff(c(0,pmin(income,rates$upper_bracket)))*rates$marginal_rate)
 
 }
 
