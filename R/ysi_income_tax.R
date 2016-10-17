@@ -5,11 +5,10 @@
 
 #' @name ysi_income_tax
 #' @param df Argument is intended to be a survey with the Tax_Matrix set, as a data frame
-#' @param fyear Argument is intended to be the financial year of interest
 #' @return A data frame
 #' @export
 
-ysi_income_tax <- function(df = NULL, fin_year = "2013-14") {
+ysi_income_tax <- function(df = NULL) {
   temp <- ysi_mutate_combine(xwave_samp)
 
   temp <- temp %>% mutate(

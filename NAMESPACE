@@ -3,5 +3,6 @@
 export(income_tax_model_func)
 export(income_tax_rates_func)
 export(ysi_income_tax)
+export(ysi_init)
 export(ysi_mutate_combine)
 export(ysi_tax_inc)

@@ -4,12 +4,10 @@
 \alias{ysi_income_tax}
 \title{YSI Income Tax Assesment Function}
 \usage{
-ysi_income_tax(df = NULL, fin_year = "2013-14")
+ysi_income_tax(df = NULL)
 }
 \arguments{
 \item{df}{Argument is intended to be a survey with the Tax_Matrix set, as a data frame}
-
-\item{fyear}{Argument is intended to be the financial year of interest}
 }
 \value{
 A data frame
