@@ -9,7 +9,7 @@
 #' @return A data frame
 #' @export
 
-ysi_income_tax <- function(df = NULL, fyear = "2013-14") {
+ysi_income_tax <- function(df = NULL, fin_year = "2013-14") {
   temp <- ysi_mutate_combine(df)
 
   # Convert Imput Cred variables
@@ -18,12 +18,28 @@ ysi_income_tax <- function(df = NULL, fyear = "2013-14") {
   temp$Citizenship[is.na(temp$Citizenship)] <- 0
 
   # Main Function steps
-  temp <- temp %>% mutate(Deduct = sapply(temp$RegInc, DEDfn),
-                          TaxInc = RegInc-Super_Inc-PrivTran-PubTransImp-ScholarshipsImp-SalSac_MainImp*52-SalSac_OtherImp*52-Deduct)
+  temp <- temp %>% mutate(
+    Deduct = sapply(temp$RegInc, DEDfn),
+    TaxInc = RegInc-Super_Inc-PrivTran-PubTransImp-ScholarshipsImp-SalSac_MainImp*52-SalSac_OtherImp*52-Deduct
+    )
 
-  temp <- temp %>% mutate(Supertax = mapply(SUPERTAXfn, temp$Super_Inc, temp$Age),
-                          RegInctax = mapply(income_tax_rates_func, income = temp$TaxInc, year = "2013-14"),
-                          Ml = sapply(temp$TaxInc, MLfn))
+  print(paste("Summary of Taxable Income"))
+  print(summary(temp$TaxInc))
+
+
+  temp <- temp %>% mutate(
+    Supertax = mapply(SUPERTAXfn, temp$Super_Inc, temp$Age),
+    RegInctax = mapply(income_tax_rates_func, income = temp$TaxInc, year = as.character(temp$Wave_year))
+    )
+
+  print(paste("Summary of Income Tax"))
+  print(summary(temp$RegInctax))
+#
+#   temp <- temp %>% mutate(
+#
+#   )
+
+
 
 
   temp$Supertax[is.na(temp$Supertax)] <- 0
@@ -67,7 +83,7 @@ ysi_tax_inc <- function(df = NULL) {
 #' @return A vector
 #' @export
 
-income_tax_rates_func <- function(income = NULL, year = "2013-14") {
+income_tax_rates_func <- function(income = NULL, year = NULL) {
 
   temp <- income_tax_rates_tbl %>%
     filter(fyear == year)

@@ -3,18 +3,10 @@
 library(data.table)
 library(devtools)
 
-lito_tbl <- fread("C:/Users/User/Dropbox (YSI)/YSI Team Folder/Content/R dev/ysi package data/lito-info.tsv", header = T)
-
-sapto_tbl <- fread("C:/Users/User/Dropbox (YSI)/YSI Team Folder/Content/R dev/ysi package data/sapto_tbl.tsv", header = T)
-
-medicare_tbl <- fread("C:/Users/User/Dropbox (YSI)/YSI Team Folder/Content/R dev/ysi package data/medicare_tbl.tsv", header = T)
-
-income_tax_rates_tbl <- fread("C:/Users/User/Dropbox (YSI)/YSI Team Folder/Content/R dev/ysi package data/tax-brackets-and-marginal-rates-by-fy.tsv", header = T)
-
-write.table(lito_tbl, "./data/lito_tbl.tsv", row.names = F)
-write.table(sapto_tbl, "./data/sapto_tbl.tsv", row.names = F)
-write.table(medicare_tbl, "./data/medicare_tbl.tsv", row.names = F)
-write.table(income_tax_rates_tbl, "C:/Users/User/Documents/ysi/data/income_tax_rates_tbl.tsv", row.names = F)
+# write.table(lito_tbl, "./data/lito_tbl.tsv", row.names = F)
+# write.table(sapto_tbl, "./data/sapto_tbl.tsv", row.names = F)
+# write.table(medicare_tbl, "./data/medicare_tbl.tsv", row.names = F)
+# write.table(income_tax_rates_tbl, "C:/Users/User/Documents/ysi/data/income_tax_rates_tbl.tsv", row.names = F)
 
 
 lito_tbl <- fread("C:/Users/User/Documents/ysi/data/lito_tbl.tsv", header = T)
