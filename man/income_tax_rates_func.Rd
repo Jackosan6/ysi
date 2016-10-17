@@ -9,7 +9,7 @@ income_tax_rates_func(income = NULL, year = NULL)
 \arguments{
 \item{income}{A numeric vector of income ($)}
 
-\item{fyear}{The finanical year of interest, in the form "2013-14", a single element or vector. To model tax changes add your model in to the table income_tax_rates_tbl.tsv and and replace the fyear coloum with a model name}
+\item{year}{The finanical year of interest, in the form "2013-14", as a vector.}
 }
 \value{
 A vector
@@ -20,6 +20,5 @@ Previously called RegIncTAXfn()
 }
 \details{
 To model a new set of rates and thresholds use income_tax_model_func()
-From cross wave use income_tax_rates_func_xwave()
 }
 

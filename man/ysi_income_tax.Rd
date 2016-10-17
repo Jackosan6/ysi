@@ -7,7 +7,7 @@
 ysi_income_tax(df = NULL, fin_year = "2013-14")
 }
 \arguments{
-\item{df}{Argument is intended to be a fresh HILDA data frame}
+\item{df}{Argument is intended to be a survey with the Tax_Matrix set, as a data frame}
 
 \item{fyear}{Argument is intended to be the financial year of interest}
 }

@@ -4,7 +4,7 @@
 #'
 
 #' @name ysi_income_tax
-#' @param df Argument is intended to be a fresh HILDA data frame
+#' @param df Argument is intended to be a survey with the Tax_Matrix set, as a data frame
 #' @param fyear Argument is intended to be the financial year of interest
 #' @return A data frame
 #' @export
