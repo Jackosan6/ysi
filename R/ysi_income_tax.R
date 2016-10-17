@@ -76,21 +76,39 @@ ysi_tax_inc <- function(df = NULL) {
 #' Previously called RegIncTAXfn()
 #'
 #' To model a new set of rates and thresholds use income_tax_model_func()
-#' From cross wave use income_tax_rates_func_xwave()
 #'
 #' @param income A numeric vector of income ($)
-#' @param fyear The finanical year of interest, in the form "2013-14", a single element or vector. To model tax changes add your model in to the table income_tax_rates_tbl.tsv and and replace the fyear coloum with a model name
+#' @param year The finanical year of interest, in the form "2013-14", as a vector.
 #' @return A vector
 #' @export
 
 income_tax_rates_func <- function(income = NULL, year = NULL) {
 
   rates <- income_tax_rates_tbl %>%
-    filter(fyear == year)
+    filter(fyear == as.character(year))
 
-  sum(diff(c(0,pmin(income,rates$upper_bracket)))*rates$marginal_rate)
+  sum(diff(c(0,pmin(income,as.numeric(rates$upper_bracket))))*as.numeric(rates$marginal_rate))
 
 }
+
+
+#' YSI Applied Income Tax Rates Function for modeling new rates and/or thresholds
+#'
+#' Can be used on taxable income (TaxInc) or another income source that uses marginal income tax rates.
+#'
+#' @name income_tax_model_func
+#' @param income A numeric vector of income ($)
+#' @param Model_name The the model name .
+#' @return A vector
+#' @export
+
+income_tax_model_func <- function(df = Null, Model_name = NULL) {
+  df$Model_nam <- "2016-17"
+  df <- df %>% mutate(
+    Model_tax = mapply(income_tax_rates_func, income = df$TaxInc, year = df$Model_nam)
+  )
+}
+
 
 # hidden functions
 
