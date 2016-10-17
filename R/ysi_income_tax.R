@@ -10,8 +10,7 @@
 #' @export
 
 ysi_income_tax <- function(df = NULL, fin_year = "2013-14") {
-  temp <- ysi_mutate_combine(df)
-
+  temp <- ysi_mutate_combine(xwave_samp)
 
   temp <- temp %>% mutate(
     # Varibles for Imput Credits
@@ -19,34 +18,34 @@ ysi_income_tax <- function(df = NULL, fin_year = "2013-14") {
     Citizenship = ifelse(is.na(Citizenship), 0, ShareDiv),
     # Income tax assessment
     Deduct = mapply(DEDfn,.$RegInc),
-    TaxInc = RegInc-Super_Inc-PrivTran-PubTransImp-ScholarshipsImp-SalSac_MainImp*52-SalSac_OtherImp*52-Deduct,
+    TaxInc = RegInc - Super_Inc - PrivTran - PubTransImp - ScholarshipsImp - SalSac_MainImp *52 - SalSac_OtherImp * 52 - Deduct,
     TaxInc = ifelse(is.na(TaxInc), 0, TaxInc),
-    Supertax = mapply(SUPERTAXfn, .$Super_Inc, .$Age),
-    RegInctax = mapply(income_tax_rates_func, income = .$TaxInc, year = as.character(.$Wave_year)),
+    Supertax = mapply(SUPERTAXfn, Super_Inc, Age),
+    RegInctax = mapply(income_tax_rates_func, income = TaxInc, year = as.character(Wave_year)), # If there is room for improvement this is the bottleneck
     WageIncImp_SalSac = ifelse(is.na(WageIncImp_SalSac), 0, WageIncImp_SalSac),
     Supertax = ifelse(is.na(Supertax), 0, Supertax),
     # Offsets
-    Ml = sapply(.$TaxInc, MLfn),
+    Ml = sapply(TaxInc, MLfn) ,
     Ml = ifelse(is.na(Ml), 0, Ml),
-    LITO = sapply(.$TaxInc, LITOfn),
+    LITO = sapply(TaxInc, LITOfn),
     LITO = ifelse(is.na(LITO), 0, LITO),
-    Sapto = ifelse(.$Age<65,0,sapply(.$TaxInc,SAPTOfn)),
+    Sapto = ifelse(Age<65,0,sapply(TaxInc,SAPTOfn)),
     Sapto = ifelse(is.na(Sapto), 0, Sapto),
-    Mato = ifelse(.$YoB>1957,0,sapply(.$WageIncImp_SalSac,MATOfn)),
+    Mato = ifelse(YoB>1957,0,sapply(WageIncImp_SalSac,MATOfn)),
     Mato = ifelse(is.na(Mato), 0, Mato),
-    Otheroff =ifelse(.$TaxInc < 0,0, sapply(.$TaxInc, OTHEROFFfn)),
+    Otheroff =ifelse(TaxInc < 0,0, sapply(TaxInc, OTHEROFFfn)),
     Otheroff = ifelse(is.na(Otheroff), 0, Otheroff),
-    Totaloff = (.$LITO + .$Sapto + .$Mato + .$Otheroff),
+    Totaloff = (LITO + Sapto + Mato + Otheroff),
     Totaloff = ifelse(is.na(Totaloff), 0, Totaloff),
     # Other
-    Impcred = ifelse(.$YoB>1957,0, mapply(IMPfn, .$ShareDiv,.$Citizenship,)),
+    Impcred = ifelse(YoB>1957,0, mapply(IMPfn, ShareDiv,Citizenship, InvestInc_p)),
     Impcred = ifelse(is.na(Impcred), 0, Impcred),
-    Redtax = mapply(REDTAXfn, .$RedundancyImp,.$Age),
+    Redtax = mapply(REDTAXfn, RedundancyImp, Age),
     Redtax = ifelse(is.na(Redtax), 0, Redtax),
     # Tax Totals
-    YSITotalIncTax_preIC = (Hilda2$RegInctax+Hilda2$Ml-Hilda2$Totaloff ),
+    YSITotalIncTax_preIC = (RegInctax + Ml - Totaloff ),
     YSITotalIncTax_preIC = ifelse(YSITotalIncTax_preIC<0,0,YSITotalIncTax_preIC),
-    YSI_Income_Tax = .$YSITotalIncTax_preIC - .$Impcred + .$Redtax + .$Supertax
+    YSI_Income_Tax = YSITotalIncTax_preIC - Impcred + Redtax + Supertax
 
   )
   return(temp)
