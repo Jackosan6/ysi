@@ -11,6 +11,7 @@
 ysi_income_tax <- function(df = NULL) {
   temp <- ysi_mutate_combine(df)
 
+  print("Calculating Taxable Income")
   temp <- temp %>% mutate(
     # Varibles for Imput Credits
     ShareDiv = ifelse(is.na(ShareDiv), 0, ShareDiv),
@@ -22,11 +23,14 @@ ysi_income_tax <- function(df = NULL) {
     Supertax = mapply(SUPERTAXfn, Super_Inc, Age),
     RegInctax = mapply(income_tax_rates_func, income = TaxInc, year = as.character(Wave_year)), # If there is room for improvement this is the bottleneck
     WageIncImp_SalSac = ifelse(is.na(WageIncImp_SalSac), 0, WageIncImp_SalSac),
-    Supertax = ifelse(is.na(Supertax), 0, Supertax),
-    # Offsets
+    Supertax = ifelse(is.na(Supertax), 0, Supertax))
+
+  # Offsets
+  print("Calculating Offsets")
+  temp <- temp %>% mutate(
     Ml = sapply(TaxInc, MLfn) ,
     Ml = ifelse(is.na(Ml), 0, Ml),
-    LITO = sapply(TaxInc, LITOfn),
+    LITO = mapply(LITOfn, TaxInc, Wave_year),
     LITO = ifelse(is.na(LITO), 0, LITO),
     Sapto = ifelse(Age<65,0,sapply(TaxInc,SAPTOfn)),
     Sapto = ifelse(is.na(Sapto), 0, Sapto),
@@ -87,10 +91,10 @@ ysi_tax_inc <- function(df = NULL) {
 
 income_tax_rates_func <- function(income = NULL, year = NULL) {
 
-  rates <- income_tax_rates_tbl %>%
-    filter(fyear == as.character(year))
-
-  sum(diff(c(0,pmin(income,as.numeric(rates$upper_bracket))))*as.numeric(rates$marginal_rate))
+  input <- data.frame(income , fyear = year)
+  temp <- merge(income_tax_rates_tbl, input, by = "fyear", sort = FALSE, all.y = TRUE)
+  temp <- sum(diff(c(0,pmin(income,as.numeric(temp$upper_bracket))))*as.numeric(temp$marginal_rate))
+  return(temp)
 
 }
 
@@ -125,7 +129,7 @@ ysi_tax_inc_mut <- function(df = NULL) {
 
 
 
-MLfn<-function(TaxInc = TaxInc)  {if(TaxInc < 20542)
+MLfn<-function(TaxInc = TaxInc )  {if(TaxInc < 20542)
 {ML <- 0
 return(ML)}
   else if(TaxInc < 24167)
@@ -136,16 +140,14 @@ return(ML)}
   return(ML)}
 }
 
-LITOfn<-function(TaxInc= TaxInc)  {if(TaxInc < 37000)
-{LITO <- 445
-return(LITO)}
-  else if(TaxInc < 66667)
-  {LITO <- 445 - 0.015*(TaxInc - 37000)
-  return(LITO)}
-  else
-  {LITO <- 0
-  return(LITO)}
+LITOfn <- function(TaxInc = TaxInc, fy_year = NULL) {
+  input <-data.frame(income = TaxInc, fy_year = fy_year)
+  temp <- merge(lito_tbl, input, by = "fy_year", sort = FALSE, all.y = TRUE)
+  temp <- pminV(pmaxC(temp$max_lito - (temp$income - temp$min_bracket) * temp$lito_taper, 0), temp$max_lito)
+  return(temp)
 }
+
+
 
 REDTAXfn <- function(RedundancyImp, Age) {
   if (RedundancyImp <=  180000) {

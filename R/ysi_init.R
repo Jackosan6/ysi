@@ -11,14 +11,20 @@
 #' @export
 
 ysi_init <- function(set = "key", xwave = F, wave_n = 14) {
-  suppressPackageStartupMessages(library(tidyr))
-  suppressPackageStartupMessages(library(feather))
-  suppressPackageStartupMessages(library(dplyr))
-  suppressPackageStartupMessages(library(data.table))
-  suppressPackageStartupMessages(library(devtools))
-  suppressPackageStartupMessages(library(ggplot2))
-  suppressPackageStartupMessages(library(scales))
-  suppressPackageStartupMessages(library(dplyr))
+
+
+  list.of.packages <- c("tidyr", "feather","dtplyr", "data.table","devtools", "ggplot2","scales", "ggrepel","DataCombine")
+  new.packages <- list.of.packages[!(list.of.packages %in% installed.packages()[,"Package"])]
+  if(length(new.packages)) install.packages(new.packages)
+
+  suppressWarnings(suppressPackageStartupMessages(library(tidyr)))
+  suppressWarnings(suppressPackageStartupMessages(library(feather)))
+  suppressWarnings(suppressPackageStartupMessages(library(dtplyr)))
+  suppressWarnings(suppressPackageStartupMessages(library(devtools)))
+  suppressWarnings(suppressPackageStartupMessages(library(ggplot2)))
+  suppressWarnings(suppressPackageStartupMessages(library(scales)))
+  suppressWarnings(suppressPackageStartupMessages(library(ggrepel)))
+  suppressWarnings(suppressPackageStartupMessages(library(DataCombine)))
 
 
   Master <<- read.csv("C:/Users/User/Dropbox (YSI)/YSI Team Folder/Content/R Dev/Hdata Variable Names Code/Hdata_Master_Names.csv", na.strings=c("","NA"))
@@ -48,7 +54,28 @@ ysi_init <- function(set = "key", xwave = F, wave_n = 14) {
     print("Almost done")
     df_subset <- subset(df, select = user_subset)
     colnames(df_subset) <- Col_Names; colnames(df_subset)
-    your_data <<- tbl_df(df_subset)
+    your_data <- tbl_df(df_subset)
+
+    year_sets <-c("1" = "2000-01",
+                  "2" = "2001-02",
+                  "3" = "2002-03",
+                  "4" = "2003-04",
+                  "5" = "2004-05",
+                  "6" = "2005-06",
+                  "7" = "2006-07",
+                  "8" = "2007-08",
+                  "9" = "2008-09",
+                  "10" = "2009-10",
+                  "11" = "2010-11",
+                  "12" = "2011-12",
+                  "13" = "2012-13",
+                  "14" = "2013-14")
+    your_data <- mutate(your_data, Wave_year = wave_n)
+
+    your_data$Wave_year <- year_sets[your_data$Wave_year]
+
+    your_data <<- your_data
+
   }
 
   # Loop for reading data, also writes vector of data set names: Hdata_sets ==============================================
