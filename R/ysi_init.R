@@ -74,7 +74,7 @@ ysi_init <- function(set = "key", xwave = F, wave_n = 14) {
 
     your_data$Wave_year <- year_sets[your_data$Wave_year]
 
-    assign(your_data, paste0(set,"_tbl"), envir = .GlobalEnv)
+    assign(paste0(set,"_tbl"),your_data,  envir = .GlobalEnv)
 
   }
 
@@ -173,5 +173,6 @@ ysi_init <- function(set = "key", xwave = F, wave_n = 14) {
             xwave_samp <<- xwave[sample(nrow(xwave), 3000), ]
   }
 
-  print("Done. Saved as your_data...")
+  print(paste0("Done. See ",set,"_tbl or xwave")
+  )
 }
