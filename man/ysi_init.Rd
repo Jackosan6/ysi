@@ -14,7 +14,7 @@ ysi_init(set = "key", xwave = F, wave_n = 14)
 \item{wave_n}{If you want a single wave of data, specify which year in the form of an integer between 1 and 14}
 }
 \value{
-A set of tables, including Master (the variable master sheet) and your_data (your data subset)
+A set of tables, including Master (the variable master sheet) and your_data (your data subset), and user_subset (filtered version of Master with your set's variables)
 }
 \description{
 This function is for the star of your script, bringing in the data and setting the data up for your analysis.

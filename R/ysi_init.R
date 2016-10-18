@@ -7,19 +7,20 @@
 #' @param set This argument needs to be a string that is one of the set names in the YSI master sheet.
 #' @param xwave Expects a logical input, xwave data (T) or single wave data (F)
 #' @param wave_n If you want a single wave of data, specify which year in the form of an integer between 1 and 14
-#' @return A set of tables, including Master (the variable master sheet) and your_data (your data subset)
+#' @return A set of tables, including Master (the variable master sheet) and your_data (your data subset), and user_subset (filtered version of Master with your set's variables)
 #' @export
 
 ysi_init <- function(set = "key", xwave = F, wave_n = 14) {
 
 
-  list.of.packages <- c("tidyr", "feather","dtplyr", "data.table","devtools", "ggplot2","scales", "ggrepel","DataCombine")
+  list.of.packages <- c("tidyr", "feather","dplyr", "data.table","devtools", "ggplot2","scales", "ggrepel","DataCombine")
   new.packages <- list.of.packages[!(list.of.packages %in% installed.packages()[,"Package"])]
   if(length(new.packages)) install.packages(new.packages)
 
   suppressWarnings(suppressPackageStartupMessages(library(tidyr)))
   suppressWarnings(suppressPackageStartupMessages(library(feather)))
-  suppressWarnings(suppressPackageStartupMessages(library(dtplyr)))
+  suppressWarnings(suppressPackageStartupMessages(library(dplyr)))
+  suppressWarnings(suppressPackageStartupMessages(library(data.table)))
   suppressWarnings(suppressPackageStartupMessages(library(devtools)))
   suppressWarnings(suppressPackageStartupMessages(library(ggplot2)))
   suppressWarnings(suppressPackageStartupMessages(library(scales)))
@@ -43,7 +44,7 @@ ysi_init <- function(set = "key", xwave = F, wave_n = 14) {
 
   # Picks right data from inputs
   if (xwave == F) {
-    print("Reading data ... Please wait")
+    print("Reading data ... ")
     loc <- filter(loc, row_number() == wave_n +1)
     loc <- loc[1,1]
 
@@ -51,7 +52,6 @@ ysi_init <- function(set = "key", xwave = F, wave_n = 14) {
     user_subset <-user_subset  %>% transform(Code =sprintf("n%s",Code))
     Col_Names <-user_subset$Name; Col_Names <-factor(Col_Names) ;user_subset <- user_subset$Code
     df <- feather::read_feather(paste0(loc))
-    print("Almost done")
     df_subset <- subset(df, select = user_subset)
     colnames(df_subset) <- Col_Names; colnames(df_subset)
     your_data <- tbl_df(df_subset)
@@ -74,7 +74,7 @@ ysi_init <- function(set = "key", xwave = F, wave_n = 14) {
 
     your_data$Wave_year <- year_sets[your_data$Wave_year]
 
-    your_data <<- your_data
+    assign(your_data, paste0(set,"_tbl"), envir = .GlobalEnv)
 
   }
 

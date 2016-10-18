@@ -1,14 +1,14 @@
 # Internal Data for tax functions
 
-library(data.table)
-library(devtools)
-
+# library(data.table)
+# library(devtools)
+#
 # write.table(lito_tbl, "./data/lito_tbl.tsv", row.names = F)
 # write.table(sapto_tbl, "./data/sapto_tbl.tsv", row.names = F)
 # write.table(medicare_tbl, "./data/medicare_tbl.tsv", row.names = F)
-# write.table(income_tax_rates_tbl, "C:/Users/User/Documents/ysi/data/income_tax_rates_tbl.tsv", row.names = F)
-
-
+# write.table(income_tax_rates_tbl, "C:/Users/User/Documents/ysi/data/income_tax_rates_tbl_old.tsv", row.names = F)
+#
+#
 # lito_tbl <- fread("C:/Users/User/Documents/ysi/data/lito_tbl.tsv", header = T)
 #
 # sapto_tbl <- fread("C:/Users/User/Documents/ysi/data/sapto_tbl.tsv", header = T)
@@ -16,8 +16,8 @@ library(devtools)
 # medicare_tbl <- fread("C:/Users/User/Documents/ysi/data/medicare_tbl.tsv", header = T)
 #
 # income_tax_rates_tbl <- fread("C:/Users/User/Documents/ysi/data/income_tax_rates_tbl.tsv", header = T)
-
-# package data into ysi
+#
+# # package data into ysi
 # use_data(lito_tbl, sapto_tbl, medicare_tbl, income_tax_rates_tbl,
 #
 #          internal = F, overwrite =  T) # If changing internal to FALSE then back to TRUE delete the rda files
@@ -26,3 +26,5 @@ library(devtools)
 #
 #
 # write.csv(income_tax_rates_tbl, "./data/income_tax_rates_tbl.csv", row.names = F)
+# medicare_tbl <- filter(medicare_tbl, sato == F)
+# income_tax_rates_tbl <- filter(income_tax_rates_tbl, sato == F)

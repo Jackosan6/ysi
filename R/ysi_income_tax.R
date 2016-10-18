@@ -9,8 +9,8 @@
 #' @export
 
 ysi_income_tax <- function(df = NULL) {
-  temp <- ysi_mutate_combine(df)
-  temp <- ysi_family_mut(temp)
+  print("Starting function...")
+  temp <- (ysi_mutate_combine(df))
   print("Calculating Taxable Income")
   temp <- temp %>% mutate(
     # Varibles for Imput Credits
@@ -26,31 +26,53 @@ ysi_income_tax <- function(df = NULL) {
     Supertax = ifelse(is.na(Supertax), 0, Supertax))
 
   # Offsets
-  print("Calculating Offsets")
+  print("Calculating Medicare Levy Surcharge, estimated run time is 1 minute...")
   temp <- temp %>% mutate(
-    Ml = sapply(TaxInc, MLfn) ,
-    Ml = ifelse(is.na(Ml), 0, Ml),
-    LITO = mapply(LITOfn, TaxInc, Wave_year),
-    LITO = ifelse(is.na(LITO), 0, LITO),
-    Sapto = ifelse(Age < 65,0,sapply(TaxInc,SAPTOfn)),
-    Sapto = ifelse(is.na(Sapto), 0, Sapto),
-    Mato = ifelse(YoB>1957,0,sapply(WageIncImp_SalSac,MATOfn)),
-    Mato = ifelse(is.na(Mato), 0, Mato),
+    Ml = MLfn(TaxInc, Wave_year),
+    Ml = ifelse(is.na(Ml), 0, Ml))
+  print("Calculating LITO, estimated run time is 1 minute...")
+  temp <- temp %>% mutate(
+    LITO = LITOfn(TaxInc, Wave_year),
+    LITO = ifelse(is.na(LITO), 0, LITO))
+  print("Calculating SAPTO, estimated run time is 1 minute...")
+  temp <- temp %>% mutate(
+    Sapto = ifelse(Age < 65, 0 , SAPTOfn(TaxInc, Wave_year)),
+    Sapto = ifelse(is.na(Sapto), 0, Sapto))
+
+  print("Calculating Other Offsets, estimated run time is 1 minute...")
+  temp <- temp %>% mutate(
+    Mato = ifelse(YoB > 1957,0, sapply(WageIncImp_SalSac,MATOfn)),
+    Mato = ifelse(is.na(Mato), 0, Mato))
+  print("Calculating Other 1")
+  temp <- temp %>% mutate(
     Otheroff =ifelse(TaxInc < 0,0, sapply(TaxInc, OTHEROFFfn)),
-    Otheroff = ifelse(is.na(Otheroff), 0, Otheroff),
+    Otheroff = ifelse(is.na(Otheroff), 0, Otheroff))
+  print("Calculating Other 2")
+  temp <- temp %>% mutate(
     Totaloff = (LITO + Sapto + Mato + Otheroff),
-    Totaloff = ifelse(is.na(Totaloff), 0, Totaloff),
+    Totaloff = ifelse(is.na(Totaloff), 0, Totaloff))
+  print("Calculating Other 3")
+  temp <- temp %>% mutate(
     # Other
     Impcred = ifelse(YoB>1957,0, mapply(IMPfn, ShareDiv,Citizenship, InvestInc_p)),
-    Impcred = ifelse(is.na(Impcred), 0, Impcred),
+    Impcred = ifelse(is.na(Impcred), 0, Impcred))
+  print("Calculating Other 4")
+  temp <- temp %>% mutate(
     Redtax = mapply(REDTAXfn, RedundancyImp, Age),
-    Redtax = ifelse(is.na(Redtax), 0, Redtax),
+    Redtax = ifelse(is.na(Redtax), 0, Redtax))
+  temp <<- temp
+  print("Calculating Other 5")
+  temp <<- temp %>% mutate(
     # Tax Totals
-    YSITotalIncTax_preIC = (RegInctax + Ml - Totaloff ),
-    YSITotalIncTax_preIC = ifelse(YSITotalIncTax_preIC<0,0,YSITotalIncTax_preIC),
+    YSITotalIncTax_preIC = RegInctax + Ml - Totaloff )
+  print("Calculating Other 6")
+  temp <- temp %>% mutate(
+    YSITotalIncTax_preIC = ifelse(YSITotalIncTax_preIC<0,0,YSITotalIncTax_preIC))
+  print("Calculating Other 7")
+  temp <- temp %>% mutate(
     YSI_Income_Tax = YSITotalIncTax_preIC - Impcred + Redtax + Supertax
-
   )
+
   return(temp)
 }
 
@@ -91,10 +113,11 @@ ysi_tax_inc <- function(df = NULL) {
 
 income_tax_rates_func <- function(income = NULL, year = NULL) {
 
-  input <- data.frame(income , fyear = year)
-  temp <- merge(income_tax_rates_tbl, input, by = "fyear", sort = FALSE, all.y = TRUE)
-  temp <- sum(diff(c(0,pmin(income,as.numeric(temp$upper_bracket))))*as.numeric(temp$marginal_rate))
-  return(temp)
+  temp <- income_tax_rates_tbl %>%
+    dplyr::filter(fyear == year)
+
+  sum(diff(c(0,pmin(income,as.numeric(temp$upper_bracket))))*as.numeric(temp$marginal_rate))
+
 
 }
 
@@ -126,19 +149,17 @@ ysi_tax_inc_mut <- function(df = NULL) {
 
 }
 
-
-
-
-MLfn<-function(TaxInc = TaxInc )  {if(TaxInc < 20542)
-{ML <- 0
-return(ML)}
-  else if(TaxInc < 24167)
-  {ML <-  0.1*(TaxInc - 20542)
-  return(ML)}
-  else
-  {ML <- 0.015*TaxInc
-  return(ML)}
+MLfn <- function(TaxInc = NULL , fy_year = NULL)  {
+  input <-data.frame(income = TaxInc, fy_year = fy_year)
+  #hold <- filter(medicare_tbl, sapto == F)
+  temp <- merge(medicare_tbl, input, by = "fy_year", sort = FALSE, all.y = TRUE)
+  temp <- pminV(pmaxC(temp$taper * (temp$income - temp$lower_threshold),0), temp$rate * temp$income)
+  temp[temp < 0 ] <-0
+  return(temp)
 }
+
+
+
 
 LITOfn <- function(TaxInc = TaxInc, fy_year = NULL) {
   input <-data.frame(income = TaxInc, fy_year = fy_year)
@@ -168,7 +189,7 @@ REDTAXfn <- function(RedundancyImp, Age) {
 }
 
 
-MATOfn<-function(WageIncImp_SalSac= WageIncImp_SalSac, YoB= YoB)  {if(WageIncImp_SalSac < 10000)
+MATOfn <- function(WageIncImp_SalSac= WageIncImp_SalSac, YoB= YoB)  {if(WageIncImp_SalSac < 10000)
 {MATO <- 0.05*WageIncImp_SalSac
 return(MATO)}
   else if(WageIncImp_SalSac < 53000)
@@ -182,17 +203,13 @@ return(MATO)}
   return(MATO)}
 }
 
-SAPTOfn <-function(TaxInc = TaxInc) {if(TaxInc < 32279)
-{SAPTO <- 2230
-return(SAPTO)}
-  else if(TaxInc < 50119)
-  {SAPTO <- 2230 - 0.125*(TaxInc - 32279)
-  return(SAPTO)}
-  else
-  {SAPTO <- 0
-  return(SAPTO)}
-}
+SAPTOfn <- function(TaxInc = NULL, fy_year = NULL) {
+  input <-data.frame(income = TaxInc, fy_year = fy_year)
+  temp <- merge(sapto_tbl, input, by = "fy_year", sort = FALSE, all.y = TRUE)
+  temp <- pmaxC(pminV(temp$max_offset, temp$upper_threshold * temp$taper_rate - temp$rebate_income * temp$taper_rate),0)
+  return(temp)
 
+}
 
 OTHEROFFfn <- function(TaxInc = TaxInc) {if(TaxInc < 6000)
 { Otheroff <- 0.003 * TaxInc
