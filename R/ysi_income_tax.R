@@ -10,7 +10,7 @@
 
 ysi_income_tax <- function(df = NULL) {
   temp <- ysi_mutate_combine(df)
-
+  temp <- ysi_family_mut(temp)
   print("Calculating Taxable Income")
   temp <- temp %>% mutate(
     # Varibles for Imput Credits
@@ -54,7 +54,7 @@ ysi_income_tax <- function(df = NULL) {
   return(temp)
 }
 
-#slight change
+
 
 
 #' YSI Taxable Income Standalone Function

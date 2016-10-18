@@ -1,7 +1,7 @@
 Package: ysi
 Type: Package
 Title: Function Package for YSI Analysis
-Version: 0.1.2
+Version: 0.1.3
 Author: R Ireland <rosseireland@gmail.com>
 Maintainer: R Ireland <rosseireland@gmail.com>
 Description: Function Library inclduing sume dependent tables
