@@ -20,9 +20,15 @@ ysi_mutate_combine <- function(df= NULL) {
                TotalIncome = TotalInc_p-TotalInc_n,
                RegInc=RegIncImp_p-RegIncImp_n,
                Assets= HHAsset_p- HHAsset_n,
-               NetRent = Rent_p - Rent_n)
-}
+               NetRent = Rent_p - Rent_n
+               # family_status =
+               #    ifelse(Family %in% 1:3, "family",
+               #    ifelse(Family == 4), "couple",
+               #    ifelse(Family %in% 5:)
+                  )
 
+
+}
 
 #' YSI Taxable Income Standalone Function
 #'
