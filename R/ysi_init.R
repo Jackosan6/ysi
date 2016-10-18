@@ -109,7 +109,7 @@ ysi_init <- function(set = "key", xwave = F, wave_n = 14) {
 
               user_subset <- Master %>% filter(Set == set) %>%
                 filter_(paste0("is.na(",Master_waves[i],") == F"))
-              user_subset <- user_subset %>% transform(Code = sprintf("%s%s",f[[i]] , Code))
+              user_subset <<- user_subset %>% transform(Code = sprintf("%s%s",f[[i]] , Code))
               Col_Names <-user_subset$Name
               Col_Names <- as.character(Col_Names)
               Col_Names <-factor(Col_Names) ;user_subset <- user_subset$Code
@@ -173,5 +173,5 @@ ysi_init <- function(set = "key", xwave = F, wave_n = 14) {
             xwave_samp <<- xwave[sample(nrow(xwave), 3000), ]
   }
 
-  print("Done")
+  print("Done. Saved as your_data...")
 }
