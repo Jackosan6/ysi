@@ -23,12 +23,12 @@
 
 ysi_mutate_combine <- function(df = NULL) {
 
-  df <- df %>% mutate(Coupled=ifelse(Family %in% 1:4,1,0), #These should be checked by someone that they're appropriate for income tax
-                            NonDepOver25=(Age>=25 & Family!=9))
-  HHtbl <- HHtbl %>% group_by(HouseID) %>% mutate(NonDepOver25s=sum(as.numeric(Age>=25 & Family!=9)))
-  HHtbl <- HHtbl %>% group_by(HouseID,IncomeUnit,Coupled) %>% mutate(NoCoupled=sum(Coupled))
-  HHtbl <- HHtbl %>% mutate(Partnered=(Coupled==1 & NoCoupled>1),
-                            Single=(Partnered==FALSE))
+  # df <- df %>% mutate(Coupled=ifelse(Family %in% 1:4,1,0), #These should be checked by someone that they're appropriate for income tax
+  #                           NonDepOver25=(Age>=25 & Family!=9))
+  # HHtbl <- HHtbl %>% group_by(HouseID) %>% mutate(NonDepOver25s=sum(as.numeric(Age>=25 & Family!=9)))
+  # HHtbl <- HHtbl %>% group_by(HouseID,IncomeUnit,Coupled) %>% mutate(NoCoupled=sum(Coupled))
+  # HHtbl <- HHtbl %>% mutate(Partnered=(Coupled==1 & NoCoupled>1),
+  #                           Single=(Partnered==FALSE))
 
   mutate(df, HouseInc = HHTotInc_p - HHTotInc_n,
          TotalIncome = TotalInc_p-TotalInc_n,
