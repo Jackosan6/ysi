@@ -15,7 +15,7 @@ income_tax_rates_func(income = NULL, year = NULL)
 A vector
 }
 \description{
-Can be used on taxable income (TaxInc) or another income source that uses marginal income tax rates.
+Can be used on taxable income (TaxableInc) or another income source that uses marginal income tax rates.
 Previously called RegIncTAXfn()
 }
 \details{

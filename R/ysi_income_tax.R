@@ -9,70 +9,48 @@
 #' @export
 
 ysi_income_tax <- function(df = NULL) {
-  print("Starting function...")
+
+  if (!is.character(df$Wave_year))
+    stop("Data input does not have a wave year variable (Wave_year)")
+
+
   temp <- (ysi_mutate_combine(df))
-  print("Calculating Taxable Income")
+  print("Calculating Taxable Income...")
   temp <- temp %>% mutate(
-    # Varibles for Imput Credits
-    ShareDiv = ifelse(is.na(ShareDiv), 0, ShareDiv),
+    ShareDiv = ifelse(is.na(ShareDiv), 0, ShareDiv), # Varibles for Imput Credits
     Citizenship = ifelse(is.na(Citizenship), 0, ShareDiv),
-    # Income tax assessment
-    Deduct = mapply(DEDfn,.$RegInc),
-    TaxInc = RegInc - Super_Inc - PrivTran - PubTransImp - ScholarshipsImp - SalSac_MainImp *52 - SalSac_OtherImp * 52 - Deduct,
-    TaxInc = ifelse(is.na(TaxInc), 0, TaxInc),
+    Deduct = mapply(DEDfn,.$RegInc),# Income tax assessment
+    TaxableInc = RegInc - Super_Inc - PrivTran - PubTransImp - ScholarshipsImp - SalSac_MainImp *52 - SalSac_OtherImp * 52 - Deduct,
+    TaxableInc = ifelse(is.na(TaxableInc), 0, TaxableInc),
     Supertax = mapply(SUPERTAXfn, Super_Inc, Age),
-    RegInctax = mapply(income_tax_rates_func, income = TaxInc, year = as.character(Wave_year)), # If there is room for improvement this is the bottleneck
+    IndTax = mapply(income_tax_rates_func, income = TaxableInc, year = as.character(Wave_year)), # If there is room for improvement this is the bottleneck
     WageIncImp_SalSac = ifelse(is.na(WageIncImp_SalSac), 0, WageIncImp_SalSac),
-    Supertax = ifelse(is.na(Supertax), 0, Supertax))
-
-  # Offsets
-  print("Calculating Medicare Levy Surcharge, estimated run time is 1 minute...")
+    Supertax = ifelse(is.na(Supertax), 0, Supertax)
+    )
+  print("Calculating Offsets")  # Offsets
   temp <- temp %>% mutate(
-    Ml = MLfn(TaxInc, Wave_year),
-    Ml = ifelse(is.na(Ml), 0, Ml))
-  print("Calculating LITO, estimated run time is 1 minute...")
-  temp <- temp %>% mutate(
-    LITO = LITOfn(TaxInc, Wave_year),
-    LITO = ifelse(is.na(LITO), 0, LITO))
-  print("Calculating SAPTO, estimated run time is 1 minute...")
-  temp <- temp %>% mutate(
-    Sapto = ifelse(Age < 65, 0 , SAPTOfn(TaxInc, Wave_year)),
-    Sapto = ifelse(is.na(Sapto), 0, Sapto))
-
-  print("Calculating Other Offsets, estimated run time is 1 minute...")
-  temp <- temp %>% mutate(
+    IndMedLevy = MLfn(TaxableInc, Wave_year),
+    IndMedLevy = ifelse(is.na(IndMedLevy), 0, IndMedLevy),
+    LITO = LITOfn(TaxableInc, Wave_year),
+    LITO = ifelse(is.na(LITO), 0, LITO),
+    Sapto = ifelse(Age < 65, 0 , SAPTOfn(TaxableInc, Wave_year)),
+    Sapto = ifelse(is.na(Sapto), 0, Sapto),
     Mato = ifelse(YoB > 1957,0, sapply(WageIncImp_SalSac,MATOfn)),
-    Mato = ifelse(is.na(Mato), 0, Mato))
-  print("Calculating Other 1")
-  temp <- temp %>% mutate(
-    Otheroff =ifelse(TaxInc < 0,0, sapply(TaxInc, OTHEROFFfn)),
-    Otheroff = ifelse(is.na(Otheroff), 0, Otheroff))
-  print("Calculating Other 2")
-  temp <- temp %>% mutate(
+    Mato = ifelse(is.na(Mato), 0, Mato),
+    Otheroff =ifelse(TaxableInc < 0,0, sapply(TaxableInc, OTHEROFFfn)),
+    Otheroff = ifelse(is.na(Otheroff), 0, Otheroff),
     Totaloff = (LITO + Sapto + Mato + Otheroff),
-    Totaloff = ifelse(is.na(Totaloff), 0, Totaloff))
-  print("Calculating Other 3")
-  temp <- temp %>% mutate(
+    Totaloff = ifelse(is.na(Totaloff), 0, Totaloff),
     # Other
     Impcred = ifelse(YoB>1957,0, mapply(IMPfn, ShareDiv,Citizenship, InvestInc_p)),
-    Impcred = ifelse(is.na(Impcred), 0, Impcred))
-  print("Calculating Other 4")
-  temp <- temp %>% mutate(
+    Impcred = ifelse(is.na(Impcred), 0, Impcred),
     Redtax = mapply(REDTAXfn, RedundancyImp, Age),
-    Redtax = ifelse(is.na(Redtax), 0, Redtax))
-  temp <<- temp
-  print("Calculating Other 5")
-  temp <<- temp %>% mutate(
+    Redtax = ifelse(is.na(Redtax), 0, Redtax),
     # Tax Totals
-    YSITotalIncTax_preIC = RegInctax + Ml - Totaloff )
-  print("Calculating Other 6")
-  temp <- temp %>% mutate(
-    YSITotalIncTax_preIC = ifelse(YSITotalIncTax_preIC<0,0,YSITotalIncTax_preIC))
-  print("Calculating Other 7")
-  temp <- temp %>% mutate(
-    YSI_Income_Tax = YSITotalIncTax_preIC - Impcred + Redtax + Supertax
-  )
-
+    Tax_preIC = ifelse(((IndTax + IndMedLevy) - Totaloff) < 0, 0, (IndTax + IndMedLevy) - Totaloff),
+    YSI_Income_Tax = Tax_preIC - Impcred + Redtax + Supertax
+    )
+  print("Done")
   return(temp)
 }
 
@@ -97,11 +75,9 @@ ysi_tax_inc <- function(df = NULL) {
 
 
 
-
-
 #' YSI Applied Income Tax Rates Function
 #'
-#' Can be used on taxable income (TaxInc) or another income source that uses marginal income tax rates.
+#' Can be used on taxable income (TaxableInc) or another income source that uses marginal income tax rates.
 #' Previously called RegIncTAXfn()
 #'
 #' To model a new set of rates and thresholds use income_tax_model_func()
@@ -124,7 +100,7 @@ income_tax_rates_func <- function(income = NULL, year = NULL) {
 
 #' YSI Applied Income Tax Rates Function for modeling new rates and/or thresholds
 #'
-#' Can be used on taxable income (TaxInc) or another income source that uses marginal income tax rates.
+#' Can be used on taxable income (TaxableInc) or another income source that uses marginal income tax rates.
 #'
 #' @name income_tax_model_func
 #' @param income A numeric vector of income ($)
@@ -136,7 +112,7 @@ income_tax_model_func <- function(df = Null, Model_name = NULL) {
   df$Model_nam <- "2016-17"
 
   df <- df %>% mutate(
-    Model_tax = mapply(income_tax_rates_func, income = df$TaxInc, year = df$Model_nam)
+    Model_tax = mapply(income_tax_rates_func, income = df$TaxableInc, year = df$Model_nam)
   )
 }
 
@@ -145,12 +121,12 @@ income_tax_model_func <- function(df = Null, Model_name = NULL) {
 
 ysi_tax_inc_mut <- function(df = NULL) {
 
-  mutate(df, TaxInc=RegInc-Super_Inc-PrivTran-PubTransImp-ScholarshipsImp-SalSac_MainImp*52-SalSac_OtherImp*52-Deduct)
+  mutate(df, TaxableInc=RegInc-Super_Inc-PrivTran-PubTransImp-ScholarshipsImp-SalSac_MainImp*52-SalSac_OtherImp*52-Deduct)
 
 }
 
-MLfn <- function(TaxInc = NULL , fy_year = NULL)  {
-  input <-data.frame(income = TaxInc, fy_year = fy_year)
+MLfn <- function(TaxableInc = NULL , fy_year = NULL)  {
+  input <-data.frame(income = TaxableInc, fy_year = fy_year)
   #hold <- filter(medicare_tbl, sapto == F)
   temp <- merge(medicare_tbl, input, by = "fy_year", sort = FALSE, all.y = TRUE)
   temp <- pminV(pmaxC(temp$taper * (temp$income - temp$lower_threshold),0), temp$rate * temp$income)
@@ -161,8 +137,8 @@ MLfn <- function(TaxInc = NULL , fy_year = NULL)  {
 
 
 
-LITOfn <- function(TaxInc = TaxInc, fy_year = NULL) {
-  input <-data.frame(income = TaxInc, fy_year = fy_year)
+LITOfn <- function(TaxableInc = TaxableInc, fy_year = NULL) {
+  input <-data.frame(income = TaxableInc, fy_year = fy_year)
   temp <- merge(lito_tbl, input, by = "fy_year", sort = FALSE, all.y = TRUE)
   temp <- pminV(pmaxC(temp$max_lito - (temp$income - temp$min_bracket) * temp$lito_taper, 0), temp$max_lito)
   return(temp)
@@ -203,79 +179,79 @@ return(MATO)}
   return(MATO)}
 }
 
-SAPTOfn <- function(TaxInc = NULL, fy_year = NULL) {
-  input <-data.frame(income = TaxInc, fy_year = fy_year)
+SAPTOfn <- function(TaxableInc = NULL, fy_year = NULL) {
+  input <-data.frame(income = TaxableInc, fy_year = fy_year)
   temp <- merge(sapto_tbl, input, by = "fy_year", sort = FALSE, all.y = TRUE)
   temp <- pmaxC(pminV(temp$max_offset, temp$upper_threshold * temp$taper_rate - temp$rebate_income * temp$taper_rate),0)
   return(temp)
 
 }
 
-OTHEROFFfn <- function(TaxInc = TaxInc) {if(TaxInc < 6000)
-{ Otheroff <- 0.003 * TaxInc
+OTHEROFFfn <- function(TaxableInc = TaxableInc) {if(TaxableInc < 6000)
+{ Otheroff <- 0.003 * TaxableInc
 return(Otheroff)}
-  else if(TaxInc < 10000)
-  { Otheroff <- 0.002 * TaxInc
+  else if(TaxableInc < 10000)
+  { Otheroff <- 0.002 * TaxableInc
   return(Otheroff)}
-  else if(TaxInc < 15000)
-  { Otheroff <- 0.002 * TaxInc
+  else if(TaxableInc < 15000)
+  { Otheroff <- 0.002 * TaxableInc
   return(Otheroff)}
-  else if(TaxInc < 20000)
-  { Otheroff <- 0.006 * TaxInc
+  else if(TaxableInc < 20000)
+  { Otheroff <- 0.006 * TaxableInc
   return(Otheroff)}
-  else if(TaxInc < 25000)
-  { Otheroff <- 0.007 * TaxInc
+  else if(TaxableInc < 25000)
+  { Otheroff <- 0.007 * TaxableInc
   return(Otheroff)}
-  else if(TaxInc < 30000)
-  { Otheroff <- 0.006 * TaxInc
+  else if(TaxableInc < 30000)
+  { Otheroff <- 0.006 * TaxableInc
   return(Otheroff)}
-  else if(TaxInc < 35000)
-  { Otheroff <- 0.007 * TaxInc
+  else if(TaxableInc < 35000)
+  { Otheroff <- 0.007 * TaxableInc
   return(Otheroff)}
-  else if(TaxInc < 40000)
-  { Otheroff <- 0.006 * TaxInc
+  else if(TaxableInc < 40000)
+  { Otheroff <- 0.006 * TaxableInc
   return(Otheroff)}
-  else if(TaxInc < 45000)
-  { Otheroff <- 0.006 * TaxInc
+  else if(TaxableInc < 45000)
+  { Otheroff <- 0.006 * TaxableInc
   return(Otheroff)}
-  else if(TaxInc < 50000)
-  { Otheroff <- 0.005 * TaxInc
+  else if(TaxableInc < 50000)
+  { Otheroff <- 0.005 * TaxableInc
   return(Otheroff)}
-  else if(TaxInc < 55000)
-  { Otheroff <- 0.005 * TaxInc
+  else if(TaxableInc < 55000)
+  { Otheroff <- 0.005 * TaxableInc
   return(Otheroff)}
-  else if(TaxInc < 60000)
-  { Otheroff <- 0.004 * TaxInc
+  else if(TaxableInc < 60000)
+  { Otheroff <- 0.004 * TaxableInc
   return(Otheroff)}
-  else if(TaxInc < 70000)
-  { Otheroff <- 0.004 * TaxInc
+  else if(TaxableInc < 70000)
+  { Otheroff <- 0.004 * TaxableInc
   return(Otheroff)}
-  else if(TaxInc < 80000)
-  { Otheroff <- 0.004 * TaxInc
+  else if(TaxableInc < 80000)
+  { Otheroff <- 0.004 * TaxableInc
   return(Otheroff)}
-  else if(TaxInc < 90000)
-  { Otheroff <- 0.004 * TaxInc
+  else if(TaxableInc < 90000)
+  { Otheroff <- 0.004 * TaxableInc
   return(Otheroff)}
-  else if(TaxInc < 100000)
-  { Otheroff <- 0.004 * TaxInc
+  else if(TaxableInc < 100000)
+  { Otheroff <- 0.004 * TaxableInc
   return(Otheroff)}
-  else if(TaxInc < 150000)
-  { Otheroff <- 0.005 * TaxInc
+  else if(TaxableInc < 150000)
+  { Otheroff <- 0.005 * TaxableInc
   return(Otheroff)}
-  else if(TaxInc < 180000)
-  { Otheroff <- 0.006 * TaxInc
+  else if(TaxableInc < 180000)
+  { Otheroff <- 0.006 * TaxableInc
   return(Otheroff)}
-  else if(TaxInc < 250000)
-  { Otheroff <- 0.008 * TaxInc
+  else if(TaxableInc < 250000)
+  { Otheroff <- 0.008 * TaxableInc
   return(Otheroff)}
-  else if(TaxInc < 500000)
-  { Otheroff <- 0.008 * TaxInc
+  else if(TaxableInc < 500000)
+  { Otheroff <- 0.008 * TaxableInc
   return(Otheroff)}
-  else if(TaxInc < 1000000)
-  { Otheroff <- 0.005 * TaxInc
+  else if(TaxableInc < 1000000)
+  { Otheroff <- 0.005 * TaxableInc
   return(Otheroff)}
   else
-  { Otheroff <- 0.002 * TaxInc
+  { Otheroff <- 0.002 * TaxableInc
   return(Otheroff)}
 }
 

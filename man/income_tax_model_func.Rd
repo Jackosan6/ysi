@@ -15,6 +15,6 @@ income_tax_model_func(df = Null, Model_name = NULL)
 A vector
 }
 \description{
-Can be used on taxable income (TaxInc) or another income source that uses marginal income tax rates.
+Can be used on taxable income (TaxableInc) or another income source that uses marginal income tax rates.
 }
 

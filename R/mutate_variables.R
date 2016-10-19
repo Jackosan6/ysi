@@ -21,7 +21,7 @@ ysi_mutate_combine <- function(df = NULL) {
 
   mutate(df, HouseInc = HHTotInc_p - HHTotInc_n,
          TotalIncome = TotalInc_p-TotalInc_n,
-         RegInc=RegIncImp_p-RegIncImp_n,
+         RegInc = RegIncImp_p-RegIncImp_n,
          Assets= HHAsset_p- HHAsset_n,
          NetRent = Rent_p - Rent_n)
 
@@ -62,5 +62,18 @@ ysi_family_mut <- function(df = NULL) {
   df <- df %>% mutate(Partnered=(Coupled==1 & NoCoupled>1),
                             Single=(Partnered==FALSE))
   return(df)
+}
+
+#' Convert na's to zeros
+#'
+#'For use with mutate_each_()
+#'
+#' @param input Typically a vector or variable
+#' @return A vector
+#' @export
+
+na_to_zero  <- function(input = NULL) {
+  input[is.na(input)] <- 0
+  return(input)
 }
 

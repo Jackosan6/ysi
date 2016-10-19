@@ -13,7 +13,7 @@
 ysi_init <- function(set = "key", xwave = F, wave_n = 14) {
 
 
-  list.of.packages <- c("tidyr", "feather","dplyr", "data.table","devtools", "ggplot2","scales", "ggrepel","DataCombine")
+  list.of.packages <- c("tidyr", "feather","dplyr", "data.table","devtools", "ggplot2","scales", "ggrepel","DataCombine", "grattan")
   new.packages <- list.of.packages[!(list.of.packages %in% installed.packages()[,"Package"])]
   if(length(new.packages)) install.packages(new.packages)
 
@@ -26,6 +26,8 @@ ysi_init <- function(set = "key", xwave = F, wave_n = 14) {
   suppressWarnings(suppressPackageStartupMessages(library(scales)))
   suppressWarnings(suppressPackageStartupMessages(library(ggrepel)))
   suppressWarnings(suppressPackageStartupMessages(library(DataCombine)))
+  suppressWarnings(suppressPackageStartupMessages(library(grattan)))
+
 
 
   Master <<- read.csv("C:/Users/User/Dropbox (YSI)/YSI Team Folder/Content/R Dev/Hdata Variable Names Code/Hdata_Master_Names.csv", na.strings=c("","NA"))
@@ -48,7 +50,7 @@ ysi_init <- function(set = "key", xwave = F, wave_n = 14) {
     loc <- filter(loc, row_number() == wave_n +1)
     loc <- loc[1,1]
 
-    user_subset <- Master %>% filter(Set == set)
+    user_subset <<- Master %>% filter(Set == set)
     user_subset <-user_subset  %>% transform(Code =sprintf("n%s",Code))
     Col_Names <-user_subset$Name; Col_Names <-factor(Col_Names) ;user_subset <- user_subset$Code
     df <- feather::read_feather(paste0(loc))
@@ -73,7 +75,7 @@ ysi_init <- function(set = "key", xwave = F, wave_n = 14) {
     your_data <- mutate(your_data, Wave_year = wave_n)
 
     your_data$Wave_year <- year_sets[your_data$Wave_year]
-
+    print(paste0("Done. See ",set,"_tbl"))
     assign(paste0(set,"_tbl"),your_data,  envir = .GlobalEnv)
 
   }
@@ -107,9 +109,9 @@ ysi_init <- function(set = "key", xwave = F, wave_n = 14) {
 
               WAVE <- tbl_df(get(n))
 
-              user_subset <- Master %>% filter(Set == set) %>%
+              user_subset <<- Master %>% filter(Set == set) %>%
                 filter_(paste0("is.na(",Master_waves[i],") == F"))
-              user_subset <<- user_subset %>% transform(Code = sprintf("%s%s",f[[i]] , Code))
+              user_subset <- user_subset %>% transform(Code = sprintf("%s%s",f[[i]] , Code))
               Col_Names <-user_subset$Name
               Col_Names <- as.character(Col_Names)
               Col_Names <-factor(Col_Names) ;user_subset <- user_subset$Code
@@ -171,8 +173,7 @@ ysi_init <- function(set = "key", xwave = F, wave_n = 14) {
             xwave$Wave_year <- year_sets[xwave$Wave_year]
             xwave <<- xwave
             xwave_samp <<- xwave[sample(nrow(xwave), 3000), ]
-  }
 
-  print(paste0("Done. See ",set,"_tbl or xwave")
-  )
+            print(paste0("Done. See xwave"))
+  }
 }

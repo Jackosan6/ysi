@@ -2,6 +2,7 @@
 
 export(income_tax_model_func)
 export(income_tax_rates_func)
+export(na_to_zero)
 export(ysi_family_mut)
 export(ysi_income_tax)
 export(ysi_init)

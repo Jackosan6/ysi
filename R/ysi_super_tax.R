@@ -1,40 +1,139 @@
-#' YSI Super Tax Assesment Function
+#' YSI Super Tax Assesment Function (Working...)
 #'
 #' This function combines all the nessesary Superannuation tax functions and data set mutations to be an all-in-one function for calculating Super Tax
 #' (Requires Tax_Matrix set)
+#' (Currently only usable in Wave14)
 
 #' @name ysi_super_tax
 #' @param df Argument is intended to be a survey with the Tax_Matrix set, as a data frame
 #' @return A data frame
-#' @export
-
-# ysi_super_tax <- function( ){
-#   temp <- temp %>% mutate_all(
-#     Sapto = ifelse(is.na(Sapto), 0, Sapto))
+#' #' @export
+#
+# ysi_super_tax <- function(df = NULL){
+#   temp <- df
+#   all_cols <- colnames(temp) # Should check changing all na's to zeros... is that a dangerous change?
+#   temp <- temp %>%
+#     mutate_each_(funs(na_to_zero), all_cols) %>%
+#     mutate_each_(funs(as.numeric), all_cols) %>%
+#     mutate(
+#       Age_30June13 = Age - 1,
+#       WageInc_ExSalSac = WageIncImp_SalSac - SalSacImp,
+#       TotalIndIncTax = IndTax + IndMedLevy,   # to calculate how much tax each person should theoretically pay on taxable income  <- unnecessary??
+#
+#       EmpCont = mapply(EmpSuperCont_fn, EmployerBusinessSuperContributions,
+#                        EmployerContribution,
+#                        FreqSuperEmployerContribution,
+#                        WageInc_ExSalSac,
+#                        EmployerContribution_PercentWage)
+#
+#       SuperTbl$EmpCont <- mapply(EmpSuperCont_fn,
+#                                  SuperTbl$EmployerBusinessSuperContributions,
+#                                  SuperTbl$EmployerContribution,
+#                                  SuperTbl$FreqSuperEmployerContribution,
+#                                  SuperTbl$WageInc_ExSalSac,
+#                                  SuperTbl$EmployerContribution_PercentWage)
 #
 #
-#
-#
+#       )
 #
 # }
 #
-#
-#
-# Sapto = ifelse(is.na(Sapto), 0, Sapto))
-#
-# # Convert NAs to 0
-# HILDA_Super[is.na(HILDA_Super)] <- 0
-#
-# # Convert variables to numeric
-# HILDA_Super <- as.data.frame(mapply(as.numeric, HILDA_Super))
-#
-# # Super data frame
-# SuperTbl <- select(HILDA_Super, HouseID, PersonID, PersonNo, IntDate, Age, Sex, NoInHouse, MarketInc_Imp_p, MarketInc_Imp_n, RegIncImp_p, RegIncImp_n, WageIncImp_SalSac, SalSacImp, SalSac_MainImp, SalSac_OtherImp, SalSac_Super_Received, SalSac_Super_Amount, SalSac_Super_Perct, PrivTran, PubTransImp, ScholarshipsImp, Super_Inc, SuperRet, Super, HSuperannuation, pSuperannuation_Retirees, pSuperannuation_Non_Retirees, Retired, SuperCapital, SuperCapital_ValueBracket, SuperCapital_Value, EmployeeStatus, CthPublicServant, CCS_member, PSSAP_member, PSS_member, EmployerBusinessSuperContributions,  EmployerContribution_PercentWage, EmployerContribution_Dollars, EmployerContribution, FreqSuperEmployerContribution, PersonalSuperContributionTypes, PersonalSuperContribution_PerctWage, PersonalSuperContribution_Dollars, PersonalSuperContribution, FreqSuperPersonalContribution, PersonalContribution_PrivateSuperFund, PersonalContribution_SuperFund, PersonallContributionPrivateSuper_Amount, FreqPersonalPrivateSuperContribution, PerctIncPrivateSuper, Partner, PartnerSuperContributions, PartnerSuperContributions_Amount, FreqPartnerSuperContributions,SuperFundValue,  EstSuperFundValue, LargestSuperFund)
-# SuperTbl[is.na(SuperTbl)] <- 0
-#
-# # Determine age of everyone at 30 June 2013
-# SuperTbl <- mutate(SuperTbl, Age_30June13 = Age - 1)
-#
-# # Wage and Salary excluding salary sacrifice
-# SuperTbl <- mutate(SuperTbl, WageInc_ExSalSac = WageIncImp_SalSac - SalSacImp)
-# SuperTbl <- mutate(SuperTbl, RegInc = RegIncImp_p - RegIncImp_n)
+
+#==============================================================================================================================
+
+# Superannuation broken into:
+
+# 1. Contributions to super
+# 1.1. Concessional Contributions
+# 1.2. Non-Concessional Contributions
+# 1.3. Govt Contributions
+
+# 2. Earnings in super
+
+# 3. Payouts from super
+
+#==============================================================================================================================
+
+## 1.1. Concessional contributions to super
+
+#======================================================
+
+# 1.1.1. Employer contributions to super fund
+# applied amount stated in survey; if NA
+# applied rate of employer contribution stated in survey; if NA
+# applied 9.25% rate, noting employers dont have to pay super on income above $48,040 per quarter
+
+EmpSuperCont_fn_2 <- function(DoesEmpMakeCont = NULL,
+                              ContMadeByEmp = NULL,
+                              FreqEmpCont = NULL,
+                              Wage = NULL,
+                              EmpContPerWage = NULL) {
+
+  if (DoesEmpMakeCont == 1 & FreqEmpCont > 0) {
+  if (FreqEmpCont == 1) {
+    EmpCont <- ContMadeByEmp * 52
+    return(EmpCont)
+  } else if (FreqEmpCont == 2) {
+    EmpCont <- ContMadeByEmp * 26
+    return(EmpCont)
+  } else if (FreqEmpCont == 3) {
+    EmpCont <- ContMadeByEmp * 6.5
+    return(EmpCont)
+  } else if (FreqEmpCont == 4) {
+    EmpCont <- ContMadeByEmp
+    return(EmpCont)
+  } else {
+    return(0)
+  }
+} else if (DoesEmpMakeCont == 1 & FreqEmpCont == 0) {
+  if (EmpContPerWage > 0) {
+    if (Wage < 48040 * 4) {
+      EmpCont <- Wage * (EmpContPerWage / 100)
+      return(EmpCont)
+    } else if (Wage >= 48040 * 4) {
+      EmpCont <- (48040 * 4) * (EmpContPerWage / 100)
+      return(EmpCont)
+    }
+  } else if (EmpContPerWage <= 0) {
+    if (Wage < 48040 * 4) {
+      EmpCont <- Wage * 0.0925
+      return(EmpCont)
+    } else if (Wage >= 48040 * 4) {
+      EmpCont <- (48040 * 4) * 0.0925
+      return(EmpCont)
+    }}} else {
+      return(0)
+    }
+  }
+
+EmpSuperCont_fn <- function(DoesEmpMakeCont = NULL,
+                            ContMadeByEmp = NULL,
+                            FreqEmpCont = NULL,
+                            Wage = NULL,
+                            EmpContPerWage = NULL) {
+
+  if (DoesEmpMakeCont == 1 & FreqEmpCont > 0) {
+  if (Wage < 48040 * 4) {
+    EmpCont <- Wage * 0.0925
+    return(EmpCont)
+  } else if (Wage >= 48040 * 4) {
+    EmpCont <- (48040 * 4) * 0.0925
+    return(EmpCont)
+  }} else {
+    return(0)
+  }
+ }
+
+
+#======================================================
+
+
+
+
+
+
+
+
+
+
+
