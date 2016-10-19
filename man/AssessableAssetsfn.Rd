@@ -5,7 +5,7 @@
 \alias{DeemedAssetsfn}
 \title{Age Pension AssessableAssetsfn}
 \usage{
-AssessableAssetsfn(HHtbl = NULL)
+AssessableAssetsfn(HHtbl = HHtbl)
 
 DeemedAssetsfn(HHtbl = NULL)
 }

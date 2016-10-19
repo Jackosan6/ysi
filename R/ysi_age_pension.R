@@ -8,17 +8,27 @@
 #' @export
 
 ysi_age_pension <- function(df = NULL){
-  #HHtbl <- HHtbl %>% filter(Age >= 18)
+  HHtbl <- df
 
+  #HHtbl <- HHtbl %>% filter(Age >= 18)
+  print("AssessableAssetsfn")
   HHtbl <- AssessableAssetsfn(HHtbl)
+  print("OrdinaryIncomefn")
+  print(levels(factor(HHtbl$Wave_n)))
 
   HHtbl <- OrdinaryIncomefn(HHtbl)
+  print("DeemedAssetsfn")
+  print(levels(factor(HHtbl$Wave_n)))
 
   HHtbl <- DeemedAssetsfn(HHtbl)
+  print("OwnHomeAPfn")
+  print(levels(factor(HHtbl$Wave_n)))
 
   HHtbl <- OwnHomeAPfn(HHtbl)
-
+  print("AgePensionRatefn")
+  print(levels(factor(HHtbl$Wave_n)))
   HHtbl <- AgePensionRatefn(HHtbl)
+  print("Last")
 
   ## deemed assets with home
   HHtbl <- HHtbl %>% mutate(AssetsAdjHome=AssetShare+SuperAdj+BankBal+UnitOPEquity+UnitHomeEquityAP,

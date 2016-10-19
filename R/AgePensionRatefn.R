@@ -10,54 +10,46 @@
 
 
 AgePensionRatefn <- function(HHtbl=NULL){
-# Load rates dataframes
-RARates <- read.csv("C:/Users/User/Dropbox (YSI)/YSI Team Folder/Content/Economy/Debt_housing/HILDA Housing Share Files/Government Benefits/Age Pension/Age Pension function/RARates.csv")
-APMaxBasicRate <- read.csv("C:/Users/User/Dropbox (YSI)/YSI Team Folder/Content/Economy/Debt_housing/HILDA Housing Share Files/Government Benefits/Age Pension/Age Pension function/APMaxBasicRate.csv")
-APPensionSuppRates <- read.csv("C:/Users/User/Dropbox (YSI)/YSI Team Folder/Content/Economy/Debt_housing/HILDA Housing Share Files/Government Benefits/Age Pension/Age Pension function/APPensionSuppRates.csv")
-APEnergySuppRates <- read.csv("C:/Users/User/Dropbox (YSI)/YSI Team Folder/Content/Economy/Debt_housing/HILDA Housing Share Files/Government Benefits/Age Pension/Age Pension function/APEnergySuppRates.csv")
-DeemingRates <- read.csv("C:/Users/User/Dropbox (YSI)/YSI Team Folder/Content/Economy/Debt_housing/HILDA Housing Share Files/Government Benefits/Age Pension/Age Pension function/DeemingRates.csv")
-APMeansTest <- read.csv("C:/Users/User/Dropbox (YSI)/YSI Team Folder/Content/Economy/Debt_housing/HILDA Housing Share Files/Government Benefits/Age Pension/Age Pension function/APMeansTest.csv")
 
-## Change the format of dates with as.Date in a all data frames
-HHtbl$IntDate <- as.Date(HHtbl$IntDate,format="%d/%m/%Y")
-RARates$RADate <- as.Date(RARates$RADate,format="%d/%m/%Y")
-APMaxBasicRate$APMaxBasicDate <- as.Date(APMaxBasicRate$APMaxBasicDate,format="%d/%m/%Y")
-APPensionSuppRates$APPensionSuppDate <- as.Date(APPensionSuppRates$APPensionSuppDate,format="%d/%m/%Y")
-APEnergySuppRates$APEnergySuppDate <- as.Date(APEnergySuppRates$APEnergySuppDate,format="%d/%m/%Y")
-DeemingRates$DeemingDate <- as.Date(DeemingRates$DeemingDate,format="%d/%m/%Y")
-APMeansTest$APMeansTestDate <- as.Date(APMeansTest$APMeansTestDate,format="%d/%m/%Y")
+  ## Change the format of dates with as.Date in a all data frames
+  HHtbl$IntDate <- as.Date(HHtbl$IntDate,format="%d/%m/%Y")
+  RARates$RADate <- as.Date(RARates$RADate,format="%d/%m/%Y")
+  APMaxBasicRate$APMaxBasicDate <- as.Date(APMaxBasicRate$APMaxBasicDate,format="%d/%m/%Y")
+  APPensionSuppRates$APPensionSuppDate <- as.Date(APPensionSuppRates$APPensionSuppDate,format="%d/%m/%Y")
+  APEnergySuppRates$APEnergySuppDate <- as.Date(APEnergySuppRates$APEnergySuppDate,format="%d/%m/%Y")
+  DeemingRates$DeemingDate <- as.Date(DeemingRates$DeemingDate,format="%d/%m/%Y")
+  APMeansTest$APMeansTestDate <- as.Date(APMeansTest$APMeansTestDate,format="%d/%m/%Y")
 
-## Giving individuals without an interview date the median interview date
-na_int_date <- HHtbl %>% filter(is.na(IntDate))
-HHtbl <- HHtbl %>% filter(!is.na(IntDate))
-
-med_int_tbl <- HHtbl %>% group_by(Wave_n) %>%
-  summarise(med_intdate = median(IntDate))
+  ## Giving individuals without an interview date the median interview date
+  na_int_date <- HHtbl %>% filter(is.na(IntDate))
+  HHtbl <- HHtbl %>% filter(!is.na(IntDate))
 
 
-na_int_date <- na_int_date %>% mutate(IntDate = ifelse(Wave_n == "WAVE08", 2008-09-22,
-                                                       ifelse(Wave_n == "WAVE09", 2009-09-24 ,
-                                                              ifelse(Wave_n == "WAVE10",2010-09-21 ,
-                                                                     ifelse(Wave_n == "WAVE11", 2011-09-07 ,
-                                                                            ifelse(Wave_n == "WAVE12",2012-09-06  ,
-                                                                                   ifelse(Wave_n == "WAVE13",2013-09-06,
-                                                                                          ifelse(Wave_n == "WAVE14", 2014-09-03,NA))))))))
 
-HHtbl <- bind_rows(HHtbl, na_int_date)
 
-## Find applicable dates the thresholds and rates for age pension were set
-HHtbl <- HHtbl %>% group_by(PersonID) %>% mutate(RADate=RARates$RADate[findInterval(IntDate,RARates$RADate)],
-                                                 APMaxBasicDate=APMaxBasicRate$APMaxBasicDate[findInterval(IntDate,APMaxBasicRate$APMaxBasicDate)],
-                                                 APPensionSuppDate=APPensionSuppRates$APPensionSuppDate[findInterval(IntDate,APPensionSuppRates$APPensionSuppDate)],
-                                                 APEnergySuppDate=APEnergySuppRates$APEnergySuppDate[findInterval(IntDate,APEnergySuppRates$APEnergySuppDate)],
-                                                 DeemingDate=DeemingRates$DeemingDate[findInterval(IntDate,DeemingRates$DeemingDate)],
-                                                 APMeansTestDate=APMeansTest$APMeansTestDate[findInterval(IntDate,APMeansTest$APMeansTestDate)])
-## Add the rates and thresholds to the HHtbl dataframe
-HHtbl <- merge(RARates,HHtbl,by="RADate",sort=FALSE,all.y=TRUE)
-HHtbl <- merge(APMaxBasicRate,HHtbl,by="APMaxBasicDate",sort=FALSE,all.y=TRUE)
-HHtbl <- merge(APPensionSuppRates,HHtbl,by="APPensionSuppDate",sort=FALSE,all.y=TRUE)
-HHtbl <- merge(APEnergySuppRates,HHtbl,by="APEnergySuppDate",sort=FALSE,all.y=TRUE)
-HHtbl <- merge(DeemingRates,HHtbl,by="DeemingDate",sort=FALSE,all.y=TRUE)
-HHtbl <- merge(APMeansTest,HHtbl,by="APMeansTestDate",sort=FALSE,all.y=TRUE)
-return(HHtbl)
+  na_int_date <- na_int_date %>% mutate(IntDate = ifelse(Wave_n == "WAVE08", 2008-09-22,
+                                                         ifelse(Wave_n == "WAVE09", 2009-09-24 ,
+                                                                ifelse(Wave_n == "WAVE10",2010-09-21 ,
+                                                                       ifelse(Wave_n == "WAVE11", 2011-09-07 ,
+                                                                              ifelse(Wave_n == "WAVE12",2012-09-06  ,
+                                                                                     ifelse(Wave_n == "WAVE13",2013-09-06,
+                                                                                            ifelse(Wave_n == "WAVE14", 2014-09-03,NA))))))))
+
+  HHtbl <- bind_rows(HHtbl, na_int_date)
+
+  ## Find applicable dates the thresholds and rates for age pension were set
+  HHtbl <- HHtbl %>% group_by(PersonID) %>% mutate(RADate=RARates$RADate[findInterval(IntDate,RARates$RADate)],
+                                                   APMaxBasicDate=APMaxBasicRate$APMaxBasicDate[findInterval(IntDate,APMaxBasicRate$APMaxBasicDate)],
+                                                   APPensionSuppDate=APPensionSuppRates$APPensionSuppDate[findInterval(IntDate,APPensionSuppRates$APPensionSuppDate)],
+                                                   APEnergySuppDate=APEnergySuppRates$APEnergySuppDate[findInterval(IntDate,APEnergySuppRates$APEnergySuppDate)],
+                                                   DeemingDate=DeemingRates$DeemingDate[findInterval(IntDate,DeemingRates$DeemingDate)],
+                                                   APMeansTestDate=APMeansTest$APMeansTestDate[findInterval(IntDate,APMeansTest$APMeansTestDate)])
+  ## Add the rates and thresholds to the HHtbl dataframe
+  HHtbl <- merge(RARates,HHtbl,by="RADate",sort=FALSE,all.y=TRUE)
+  HHtbl <- merge(APMaxBasicRate,HHtbl,by="APMaxBasicDate",sort=FALSE,all.y=TRUE)
+  HHtbl <- merge(APPensionSuppRates,HHtbl,by="APPensionSuppDate",sort=FALSE,all.y=TRUE)
+  HHtbl <- merge(APEnergySuppRates,HHtbl,by="APEnergySuppDate",sort=FALSE,all.y=TRUE)
+  HHtbl <- merge(DeemingRates,HHtbl,by="DeemingDate",sort=FALSE,all.y=TRUE)
+  HHtbl <- merge(APMeansTest,HHtbl,by="APMeansTestDate",sort=FALSE,all.y=TRUE)
+  return(HHtbl)
 }

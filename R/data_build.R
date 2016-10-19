@@ -4,7 +4,7 @@
 # library(devtools)
 #
 # package data into ysi
-# use_data(lito_tbl, sapto_tbl, medicare_tbl, income_tax_rates_tbl, APEnergySuppRates,APMaxBasicRate,APMeansTest,APPensionSuppRates,DeemingRates,
+# use_data(lito_tbl, sapto_tbl, medicare_tbl, income_tax_rates_tbl, APEnergySuppRates,APMaxBasicRate,APMeansTest,APPensionSuppRates,DeemingRates, RARates,
 #
 #          internal = F, overwrite =  T) # If changing internal to FALSE then back to TRUE delete the rda files
 
@@ -32,7 +32,7 @@
 # income_tax_rates_tbl <- filter(income_tax_rates_tbl, sato == F)
 # sapto_tbl <- filter(sapto_tbl, family_status == "single")
 
-# Jacksons Age pensions tables
+# # Jacksons Age pensions tables
 # APEnergySuppRates <- fread("C:/Users/User/Dropbox (YSI)/YSI Team Folder/Content/Economy/Debt_housing/HILDA Housing Share Files/Government Benefits/Age Pension/Age Pension function/APEnergySuppRates.csv", header = T)
 # APMaxBasicRate <- fread("C:/Users/User/Dropbox (YSI)/YSI Team Folder/Content/Economy/Debt_housing/HILDA Housing Share Files/Government Benefits/Age Pension/Age Pension function/APMaxBasicRate.csv", header = T)
 # APMeansTest <- fread("C:/Users/User/Dropbox (YSI)/YSI Team Folder/Content/Economy/Debt_housing/HILDA Housing Share Files/Government Benefits/Age Pension/Age Pension function/APMeansTest.csv", header = T)
@@ -46,5 +46,5 @@
 # write.table(APPensionSuppRates, "C:/Users/User/Documents/ysi/data/APPensionSuppRates.tsv", row.names = F)
 # write.table(DeemingRates, "C:/Users/User/Documents/ysi/data/DeemingRates.tsv", row.names = F)
 # write.table(RARates, "C:/Users/User/Documents/ysi/data/RARates.tsv", row.names = F)
-
+#
 

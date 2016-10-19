@@ -8,7 +8,7 @@
 #' @return A data frame
 #' @export
 #'
-AssessableAssetsfn <- function(HHtbl=NULL){
+AssessableAssetsfn <- function(HHtbl = HHtbl){
   ## Dummy the individual as partnered if in a couple and there is another person in the family in the same situation
   HHtbl <- HHtbl %>% group_by() %>% mutate(Coupled=ifelse(Family %in% 1:4,1,0),
                             NonDepOver25=(Age>=25 & Family!=9))

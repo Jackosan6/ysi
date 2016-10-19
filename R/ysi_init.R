@@ -91,9 +91,11 @@ single_wave_func <- function(wave_n = NULL, set = set) {
                 "12" = "2011-12",
                 "13" = "2012-13",
                 "14" = "2013-14")
-  your_data <- mutate(your_data, Wave_year = wave_n)
+  your_data <- mutate(your_data, Wave_year = wave_n,
+                                  Wave_n = wave_n)
 
   your_data$Wave_year <- year_sets[your_data$Wave_year]
+
   print(paste0("Done. See ",set,"_tbl"))
   assign(paste0(set,"_tbl"),your_data,  envir = .GlobalEnv)
 
