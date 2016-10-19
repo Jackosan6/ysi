@@ -42,138 +42,167 @@ ysi_init <- function(set = "key", xwave = F, wave_n = 14) {
    if (xwave == F & !wave_n %in% c(1:14))
     stop("wave_n is not in correct form")
 
-  loc <- transpose(read.csv("C:/Users/User/Documents/list.csv")) # list of names...wink wink nudge nudge
 
   # Picks right data from inputs
   if (xwave == F) {
-    print("Reading data ... ")
-    loc <- filter(loc, row_number() == wave_n +1)
-    loc <- loc[1,1]
 
-    user_subset <<- Master %>% filter(Set == set)
-    user_subset <-user_subset  %>% transform(Code =sprintf("n%s",Code))
-    Col_Names <-user_subset$Name; Col_Names <-factor(Col_Names) ;user_subset <- user_subset$Code
-    df <- feather::read_feather(paste0(loc))
-    df_subset <- subset(df, select = user_subset)
-    colnames(df_subset) <- Col_Names; colnames(df_subset)
-    your_data <- tbl_df(df_subset)
-
-    year_sets <-c("1" = "2000-01",
-                  "2" = "2001-02",
-                  "3" = "2002-03",
-                  "4" = "2003-04",
-                  "5" = "2004-05",
-                  "6" = "2005-06",
-                  "7" = "2006-07",
-                  "8" = "2007-08",
-                  "9" = "2008-09",
-                  "10" = "2009-10",
-                  "11" = "2010-11",
-                  "12" = "2011-12",
-                  "13" = "2012-13",
-                  "14" = "2013-14")
-    your_data <- mutate(your_data, Wave_year = wave_n)
-
-    your_data$Wave_year <- year_sets[your_data$Wave_year]
-    print(paste0("Done. See ",set,"_tbl"))
-    assign(paste0(set,"_tbl"),your_data,  envir = .GlobalEnv)
+    single_wave_func(wave_n = wave_n, set = set)
 
   }
 
   # Loop for reading data, also writes vector of data set names: Hdata_sets ==============================================
   if (xwave == T) {
 
-    loc <- loc[-1,]
+    xwave_func(set = set)
 
-              i <- 1;Hdata_sets <- c(Characters=character())
-            print("Reading data ... Please wait")
-            for (n in loc) {
-              print(length(loc)-i)
-
-              df <- feather::read_feather(n)
-              assign(sprintf("%s%02d","WAVE",i), df)
-
-              temp <-c(sprintf("%s%02d","WAVE",i))
-              Hdata_sets <- append(Hdata_sets,temp)
-              rm(df)
-              i <- i + 1
-
-            }
-
-            # Loop generating reduced set data frames: Wave1   ====================================================================================
-            Reduced_sets <- c(Characters=character());i <- 1; f <- factor(letters); hol <- select(Master, 8:21); Master_waves <- colnames(hol)
-            print("Constraining data")
-
-            for (n in Hdata_sets) {
-              print(length(Hdata_sets)-i)
-
-              WAVE <- tbl_df(get(n))
-
-              user_subset <<- Master %>% filter(Set == set) %>%
-                filter_(paste0("is.na(",Master_waves[i],") == F"))
-              user_subset <- user_subset %>% transform(Code = sprintf("%s%s",f[[i]] , Code))
-              Col_Names <-user_subset$Name
-              Col_Names <- as.character(Col_Names)
-              Col_Names <-factor(Col_Names) ;user_subset <- user_subset$Code
-              user_subset <- as.character(user_subset)
-              # print(user_subset)
-              WAVE<- subset(WAVE, select = user_subset)
-              colnames(WAVE) <- Col_Names
-
-              # bring in NA filled variable for non existant variables in that wave
-              missing_subset <- Master %>% filter(Set == set) %>%
-                filter_(paste0("is.na(",Master_waves[i],") == T"))
-              namevector <- as.character(missing_subset$Name)
-              WAVE[,namevector] <- NA
-              WAVE <- WAVE %>%  mutate(Wave_n = paste(n))
-              assign(sprintf("%s%02d","RedWAVE",i), WAVE)
-
-              temp <-c(sprintf("%s%02d","RedWAVE",i))
-              Reduced_sets <- append(Reduced_sets,temp)
-
-              i <- i + 1
-            }
-            print("Building...")
-
-            for (n in Reduced_sets) {
-              get(n)[ , order(names(get(n)))]
-            }
-
-            xwave <- bind_rows(RedWAVE01,
-                               RedWAVE02,
-                               RedWAVE03,
-                               RedWAVE04,
-                               RedWAVE05,
-                               RedWAVE06,
-                               RedWAVE07,
-                               RedWAVE08,
-                               RedWAVE09,
-                               RedWAVE10,
-                               RedWAVE11,
-                               RedWAVE12,
-                               RedWAVE13,
-                               RedWAVE14)
-
-            xwave <- mutate(xwave, Wave_year = Wave_n)
-            year_sets <-c("WAVE01" = "2000-01",
-                          "WAVE02" = "2001-02",
-                          "WAVE03" = "2002-03",
-                          "WAVE04" = "2003-04",
-                          "WAVE05" = "2004-05",
-                          "WAVE06" = "2005-06",
-                          "WAVE07" = "2006-07",
-                          "WAVE08" = "2007-08",
-                          "WAVE09" = "2008-09",
-                          "WAVE10" = "2009-10",
-                          "WAVE11" = "2010-11",
-                          "WAVE12" = "2011-12",
-                          "WAVE13" = "2012-13",
-                          "WAVE14" = "2013-14")
-
-            xwave$Wave_year <- year_sets[xwave$Wave_year]
-            xwave <<- xwave
-            xwave_samp <<- xwave[sample(nrow(xwave), 3000), ]
-
-            print(paste0("Done. See xwave"))
   }
+}
+
+
+
+# ========== ============================================== ============================================== ==============================================
+# building functions
+
+single_wave_func <- function(wave_n = NULL, set = set) {
+
+  loc <- transpose(read.csv("C:/Users/User/Documents/list.csv")) # list of names...wink wink nudge nudge
+
+  print("Reading data ... ")
+  loc <- filter(loc, row_number() == wave_n +1)
+  loc <- loc[1,1]
+  user_subset <<- Master %>% filter(Set == set)
+  user_subset <-user_subset  %>% transform(Code =sprintf("n%s",Code))
+  Col_Names <-user_subset$Name; Col_Names <-factor(Col_Names) ;user_subset <- user_subset$Code
+  df <- feather::read_feather(paste0(loc))
+  df_subset <- subset(df, select = user_subset)
+  colnames(df_subset) <- Col_Names; colnames(df_subset)
+  your_data <- tbl_df(df_subset)
+  year_sets <-c("1" = "2000-01",
+                "2" = "2001-02",
+                "3" = "2002-03",
+                "4" = "2003-04",
+                "5" = "2004-05",
+                "6" = "2005-06",
+                "7" = "2006-07",
+                "8" = "2007-08",
+                "9" = "2008-09",
+                "10" = "2009-10",
+                "11" = "2010-11",
+                "12" = "2011-12",
+                "13" = "2012-13",
+                "14" = "2013-14")
+  your_data <- mutate(your_data, Wave_year = wave_n)
+
+  your_data$Wave_year <- year_sets[your_data$Wave_year]
+  print(paste0("Done. See ",set,"_tbl"))
+  assign(paste0(set,"_tbl"),your_data,  envir = .GlobalEnv)
+
+}
+
+
+
+xwave_func <- function( set = set) {
+
+  loc <- transpose(read.csv("C:/Users/User/Documents/list.csv")) # list of names...wink wink nudge nudge
+
+  loc <- loc[-1,]
+
+  i <- 1;Hdata_sets <- c(Characters=character())
+  print("Reading data ... Please wait")
+  for (n in loc) {
+    print(length(loc)-i)
+
+    df <- feather::read_feather(n)
+    assign(sprintf("%s%02d","WAVE",i), df)
+
+    temp <-c(sprintf("%s%02d","WAVE",i))
+    Hdata_sets <- append(Hdata_sets,temp)
+    rm(df)
+    i <- i + 1
+
+  }
+
+  # Loop generating reduced set data frames: Wave1   ====================================================================================
+
+  Reduced_sets <- c(Characters=character());ij <- 1; letter_holder <- factor(letters); hol <- select(Master, 8:21); Master_waves <- colnames(hol)
+  print("Constraining data")
+
+  for (n in Hdata_sets) {
+    print(length(Hdata_sets)-ij)
+    WAVE <- tbl_df(get(n))
+
+    user_subset <- interior_func(set = set, ij = ij, Master_waves = Master_waves)
+
+    Col_Names <-user_subset$Name
+    Col_Names <- as.character(Col_Names)
+    Col_Names <-factor(Col_Names) ;user_subset <- user_subset$Code
+    user_subset <- as.character(user_subset)
+    # print(user_subset)
+    WAVE<- subset(WAVE, select = user_subset)
+    colnames(WAVE) <- Col_Names
+
+    # bring in NA filled variable for non existant variables in that wave
+    missing_subset <- Master %>% filter(Set == set) %>%
+      filter_(paste0("is.na(",Master_waves[ij],") == T"))
+    namevector <- as.character(missing_subset$Name)
+    WAVE[,namevector] <- NA
+    WAVE <- WAVE %>%  mutate(Wave_n = paste(n))
+    assign(sprintf("%s%02d","RedWAVE",ij), WAVE)
+
+    temp <-c(sprintf("%s%02d","RedWAVE",ij))
+    Reduced_sets <- append(Reduced_sets,temp)
+
+    ij <- ij + 1
+  }
+  print("Building...")
+
+  for (n in Reduced_sets) {
+    get(n)[ , order(names(get(n)))]
+  }
+
+  xwave <- bind_rows(RedWAVE01,
+                     RedWAVE02,
+                     RedWAVE03,
+                     RedWAVE04,
+                     RedWAVE05,
+                     RedWAVE06,
+                     RedWAVE07,
+                     RedWAVE08,
+                     RedWAVE09,
+                     RedWAVE10,
+                     RedWAVE11,
+                     RedWAVE12,
+                     RedWAVE13,
+                     RedWAVE14)
+
+  xwave <- mutate(xwave, Wave_year = Wave_n)
+  year_sets <-c("WAVE01" = "2000-01",
+                "WAVE02" = "2001-02",
+                "WAVE03" = "2002-03",
+                "WAVE04" = "2003-04",
+                "WAVE05" = "2004-05",
+                "WAVE06" = "2005-06",
+                "WAVE07" = "2006-07",
+                "WAVE08" = "2007-08",
+                "WAVE09" = "2008-09",
+                "WAVE10" = "2009-10",
+                "WAVE11" = "2010-11",
+                "WAVE12" = "2011-12",
+                "WAVE13" = "2012-13",
+                "WAVE14" = "2013-14")
+
+  xwave$Wave_year <- year_sets[xwave$Wave_year]
+  xwave <<- xwave
+  xwave_samp <<- xwave[sample(nrow(xwave), 3000), ]
+
+
+  print(paste0("Done. See xwave"))
+}
+
+
+interior_func <- function(set = set, ij = ij, Master_waves = Master_waves) {
+  user_subset <<- Master %>% filter(Set == set) %>%
+    filter_(paste0("is.na(",Master_waves[ij],") == F"))
+  letter_holder <- factor(letters)
+  user_subset <- user_subset %>% transform(Code = sprintf("%s%s",letter_holder[[ij]] , Code) )
 }
