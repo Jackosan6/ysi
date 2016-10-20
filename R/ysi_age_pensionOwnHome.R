@@ -41,7 +41,8 @@ ysi_age_pensionOwnHome <- function(HHtbl=HHtbl){
   HHtbl$AP_per_Fortnight[which(is.na(HHtbl$AP_per_Fortnight))] <- 0
   HHtbl <- HHtbl %>% mutate(AnnualisedAP=AP_per_Fortnight*26)
 
-
+  print(length(HHtbl$RAMaxRentSingle)) # can't find this variable
+  stop
   HHtbl <- HHtbl %>% group_by(PersonID) %>%
     mutate(ra=ifelse(Rent_Assist==1,ifelse(Single==1,min(-min((Fortnightly_Rent- RAMaxRentSingle )*0.75,0), RAMaxRatesSingle )*26,
                                            min(-min((Fortnightly_Rent-RAMaxRentCoupled)*0.75,0),RAMaxRatesCoupled)*26/2),0),
