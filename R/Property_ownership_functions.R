@@ -38,7 +38,6 @@ OwnHomeAPfn <- function(HHtbl=NULL){
   HHtbl <- HHtbl %>% group_by(HouseID,IncomeUnit,Coupled) %>% mutate(UnitOwnHomeAP=(sum(OwnHome)>0),
                                                                      UnitOwnHomeShareAP=ifelse(HHSumOwnHome>0,sum(OwnHome)/HHSumOwnHome,0))
   HHtbl <- HHtbl %>% mutate(UnitHomeEquityAP=(HomeEquity-HomeEquity_n)*UnitOwnHomeShareAP)
-  print(length(HHtbl$Wave_n))
   return(HHtbl)
 }
 

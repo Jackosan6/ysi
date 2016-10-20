@@ -10,17 +10,23 @@
 
 
 ysi_age_pensionOwnHome <- function(HHtbl=HHtbl){
-  HHtbl <- HHtbl %>% filter(Age >= 18)
+  #HHtbl <- HHtbl %>% filter(Age >= 18)
 
+  print("AssessableAssetsfn")
   HHtbl <- AssessableAssetsfn(HHtbl)
+  print("OrdinaryIncomefn")
 
   HHtbl <- OrdinaryIncomefn(HHtbl)
+  print("DeemedAssetsfn")
 
   HHtbl <- DeemedAssetsfn(HHtbl)
+  print("OwnHomeAPfn")
 
   HHtbl <- OwnHomeAPfn(HHtbl)
+  print("AgePensionRatefn")
 
   HHtbl <- AgePensionRatefn(HHtbl)
+  print("Other items")
 
   ## deemed assets with home
   HHtbl <- HHtbl %>% mutate(AssetsAdjHome=AssetShare+SuperAdj+BankBal+UnitOPEquity+UnitHomeEquityAP,
@@ -37,7 +43,7 @@ ysi_age_pensionOwnHome <- function(HHtbl=HHtbl){
 
 
   HHtbl <- HHtbl %>% group_by(PersonID) %>%
-    mutate(ra=ifelse(Rent_Assist==1,ifelse(Single==1,min(-min((Fortnightly_Rent-RAMaxRentSingle)*0.75,0),RAMaxRatesSingle)*26,
+    mutate(ra=ifelse(Rent_Assist==1,ifelse(Single==1,min(-min((Fortnightly_Rent- RAMaxRentSingle )*0.75,0), RAMaxRatesSingle )*26,
                                            min(-min((Fortnightly_Rent-RAMaxRentCoupled)*0.75,0),RAMaxRatesCoupled)*26/2),0),
            mpr=ifelse(Single==1,APMBRSingle+APPSSingle+APESSingle+ra,APMBRCoupled+APPSCoupled+APESCoupled+ra),
            di=ifelse(Single==1,sum(diff(c(0,pmin(DeemedAssets,c(DeemTASingle,Inf))))*c(DeemBTR,DeemATR)),

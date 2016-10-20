@@ -15,6 +15,7 @@ ysi_income_tax <- function(df = NULL) {
 
 
   temp <- (ysi_mutate_combine(df))
+
   print("Calculating Taxable Income...")
   temp <- temp %>% mutate(
     ShareDiv = ifelse(is.na(ShareDiv), 0, ShareDiv), # Varibles for Imput Credits
@@ -27,7 +28,9 @@ ysi_income_tax <- function(df = NULL) {
     WageIncImp_SalSac = ifelse(is.na(WageIncImp_SalSac), 0, WageIncImp_SalSac),
     Supertax = ifelse(is.na(Supertax), 0, Supertax)
     )
-  print("Calculating Offsets")  # Offsets
+
+  print("Calculating Offsets")
+  # Offsets
   temp <- temp %>% mutate(
     IndMedLevy = MLfn(TaxableInc, Wave_year),
     IndMedLevy = ifelse(is.na(IndMedLevy), 0, IndMedLevy),
@@ -50,8 +53,9 @@ ysi_income_tax <- function(df = NULL) {
     Tax_preIC = ifelse(((IndTax + IndMedLevy) - Totaloff) < 0, 0, (IndTax + IndMedLevy) - Totaloff),
     YSI_Income_Tax = Tax_preIC - Impcred + Redtax + Supertax
     )
-  print("Done")
   return(temp)
+
+  print("Done")
 }
 
 
