@@ -13,18 +13,19 @@ ysi_age_pension <- function(df = NULL){
   #HHtbl <- HHtbl %>% filter(Age >= 18)
   print("AssessableAssetsfn")
   HHtbl <- AssessableAssetsfn(HHtbl)
+
   print("OrdinaryIncomefn")
-
   HHtbl <- OrdinaryIncomefn(HHtbl)
+
   print("DeemedAssetsfn")
-
   HHtbl <- DeemedAssetsfn(HHtbl)
+
   print("OwnHomeAPfn")
-
   HHtbl <- OwnHomeAPfn(HHtbl)
-  print("AgePensionRatefn")
 
+  print("AgePensionRatefn")
   HHtbl <- AgePensionRatefn(HHtbl)
+
   print("Other items")
 
   ## deemed assets with home
@@ -35,11 +36,9 @@ ysi_age_pension <- function(df = NULL){
 
   ### NOW FOR THE OUTPUTS
 
-
   ## Dummy for if currently receiving a pension payment
   HHtbl$AP_per_Fortnight[which(is.na(HHtbl$AP_per_Fortnight))] <- 0
   HHtbl <- HHtbl %>% mutate(AnnualisedAP=AP_per_Fortnight*26)
-
 
   HHtbl <- HHtbl %>% group_by(PersonID) %>%
     mutate(ra=ifelse(Rent_Assist==1,ifelse(Single==1,min(-min((Fortnightly_Rent-RAMaxRentSingle)*0.75,0),RAMaxRatesSingle)*26,
@@ -61,3 +60,4 @@ ysi_age_pension <- function(df = NULL){
 
   return(HHtbl)
 }
+

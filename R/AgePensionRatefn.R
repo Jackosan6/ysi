@@ -10,9 +10,8 @@
 
 
 AgePensionRatefn <- function(HHtbl=NULL){
-
   ## Change the format of dates with as.Date in a all data frames
-  HHtbl$IntDate <- as.Date(HHtbl$IntDate,format="%d/%m/%Y")
+  HHtbl$IntDate <- as.Date(HHtbl$IntDate,format="%d/%m/%Y", origin = "1960-10-01")
   RARates$RADate <- as.Date(RARates$RADate,format="%d/%m/%Y")
   APMaxBasicRate$APMaxBasicDate <- as.Date(APMaxBasicRate$APMaxBasicDate,format="%d/%m/%Y")
   APPensionSuppRates$APPensionSuppDate <- as.Date(APPensionSuppRates$APPensionSuppDate,format="%d/%m/%Y")
@@ -24,9 +23,6 @@ AgePensionRatefn <- function(HHtbl=NULL){
   na_int_date <- HHtbl %>% filter(is.na(IntDate))
   HHtbl <- HHtbl %>% filter(!is.na(IntDate))
 
-
-
-
   na_int_date <- na_int_date %>% mutate(IntDate = ifelse(Wave_n == "WAVE08", 2008-09-22,
                                                          ifelse(Wave_n == "WAVE09", 2009-09-24 ,
                                                                 ifelse(Wave_n == "WAVE10",2010-09-21 ,
@@ -34,6 +30,7 @@ AgePensionRatefn <- function(HHtbl=NULL){
                                                                               ifelse(Wave_n == "WAVE12",2012-09-06  ,
                                                                                      ifelse(Wave_n == "WAVE13",2013-09-06,
                                                                                             ifelse(Wave_n == "WAVE14", 2014-09-03,NA))))))))
+
 
   HHtbl <- bind_rows(HHtbl, na_int_date)
 
@@ -44,12 +41,20 @@ AgePensionRatefn <- function(HHtbl=NULL){
                                                    APEnergySuppDate=APEnergySuppRates$APEnergySuppDate[findInterval(IntDate,APEnergySuppRates$APEnergySuppDate)],
                                                    DeemingDate=DeemingRates$DeemingDate[findInterval(IntDate,DeemingRates$DeemingDate)],
                                                    APMeansTestDate=APMeansTest$APMeansTestDate[findInterval(IntDate,APMeansTest$APMeansTestDate)])
+
   ## Add the rates and thresholds to the HHtbl dataframe
   HHtbl <- merge(RARates,HHtbl,by="RADate",sort=FALSE,all.y=TRUE)
+
   HHtbl <- merge(APMaxBasicRate,HHtbl,by="APMaxBasicDate",sort=FALSE,all.y=TRUE)
+
   HHtbl <- merge(APPensionSuppRates,HHtbl,by="APPensionSuppDate",sort=FALSE,all.y=TRUE)
+
   HHtbl <- merge(APEnergySuppRates,HHtbl,by="APEnergySuppDate",sort=FALSE,all.y=TRUE)
+
   HHtbl <- merge(DeemingRates,HHtbl,by="DeemingDate",sort=FALSE,all.y=TRUE)
+
   HHtbl <- merge(APMeansTest,HHtbl,by="APMeansTestDate",sort=FALSE,all.y=TRUE)
+
   return(HHtbl)
+
 }

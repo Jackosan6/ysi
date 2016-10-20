@@ -14,6 +14,7 @@
 OwnHomeAPfn <- function(HHtbl=NULL){
   ## Dummy the individual as partnered if in a couple and there is another person in the family in the same situation
   HHtbl <- HHtbl %>% group_by() %>% mutate(Coupled=ifelse(Family %in% 1:4,1,0))
+
   HHtbl<-HHtbl %>% mutate(OwnHome=ifelse(PersonNo==1 & OwnHomeP1==1,1,
                                          ifelse(PersonNo==2 & OwnHomeP2==1,1,
                                                 ifelse(PersonNo==3 & OwnHomeP3==1,1,
@@ -32,7 +33,9 @@ OwnHomeAPfn <- function(HHtbl=NULL){
                                                                                                                                            ifelse(PersonNo==16 & OwnHomeP16==1,1,
                                                                                                                                                   ifelse(PersonNo==17 & OwnHomeP17==1,1,
                                                                                                                                                          ifelse(PersonNo==18 & OwnHomeP18==1,1,0)))))))))))))))))))
+
   HHtbl$OwnHome[is.na(HHtbl$OwnHome)] <- 0
+
   ## For breaking up home equity
   HHtbl <- HHtbl %>% group_by(HouseID) %>% mutate(HHSumOwnHome=sum(OwnHome))
   HHtbl <- HHtbl %>% group_by(HouseID,IncomeUnit,Coupled) %>% mutate(UnitOwnHomeAP=(sum(OwnHome)>0),
