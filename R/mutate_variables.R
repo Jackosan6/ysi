@@ -10,7 +10,7 @@
 #' HouseHold level combined Assets (Assets)
 #' Idividual Net Rent (NetRent)
 #'
-#' @param df Argument is intended to be a fresh HILDA data frame
+#' @param df Argument is intended to be a data frame
 #' @return A data frame
 #' @export
 
@@ -32,7 +32,7 @@ ysi_mutate_combine <- function(df = NULL) {
 #'
 #' This function just finds taxable income.
 #'
-#' @param df Argument is intended to be a fresh HILDA data frame
+#' @param df Argument is intended to be a data frame
 #' @return A data frame
 #' @export
 
@@ -49,7 +49,7 @@ ysi_tax_inc <- function(df = NULL) {
 #' This function mutates variables for coupled, Non dependents over 25, Number coupled, Partnered and Single.
 #' (Coupled,NonDepOver25, NoCoupled, Partnered, Single)
 #'
-#' @param df Argument is intended to be a fresh HILDA data frame
+#' @param df Argument is intended to be a data frame
 #' @return A data frame
 #' @export
 

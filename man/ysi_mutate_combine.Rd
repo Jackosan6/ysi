@@ -7,7 +7,7 @@
 ysi_mutate_combine(df = NULL)
 }
 \arguments{
-\item{df}{Argument is intended to be a fresh HILDA data frame}
+\item{df}{Argument is intended to be a data frame}
 }
 \value{
 A data frame

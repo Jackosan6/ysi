@@ -55,7 +55,7 @@ ysi_income_tax <- function(df = NULL) {
     )
   return(temp)
 
-  print("Done")
+  print("Done, see variable -> $YSI_Income_Tax")
 }
 
 

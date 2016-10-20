@@ -9,7 +9,7 @@ ysi_tax_inc(df = NULL)
 ysi_tax_inc(df = NULL)
 }
 \arguments{
-\item{df}{Argument is intended to be a fresh HILDA data frame}
+\item{df}{Argument is intended to be a data frame}
 
 \item{df}{Argument is intended to be a fresh HILDA data frame}
 }
