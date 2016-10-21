@@ -80,6 +80,7 @@ single_wave_func <- function(wave_n = NULL, set = set) {
   user_subset <- user_subset  %>% transform(Code = sprintf("n%s",Code))
   user_subset <- user_subset$Code
   user_subset <- setdiff(user_subset, miss_namevector)
+
   df <- feather::read_feather(paste0(loc))
   df_subset <- subset(df, select = user_subset)
   user_subset <- sub('.', '', user_subset)
