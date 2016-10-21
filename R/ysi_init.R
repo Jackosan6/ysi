@@ -70,11 +70,21 @@ single_wave_func <- function(wave_n = NULL, set = set) {
   print("Reading data ... ")
   loc <- filter(loc, row_number() == wave_n +1)
   loc <- loc[1,1]
-  user_subset <<- Master %>% filter(Set == set)
-  user_subset <-user_subset  %>% transform(Code =sprintf("n%s",Code))
-  Col_Names <-user_subset$Name; Col_Names <-factor(Col_Names) ;user_subset <- user_subset$Code
+
+  missing_subset <- Master %>% filter(Set == set) %>%
+    filter_(paste0("is.na(Wave",wave_n,") == T"))
+  miss_namevector <- as.character(missing_subset$Code)
+  miss_namevector <- sprintf("n%s",miss_namevector)
+  user_subset <- Master %>% filter(Set == set)
+  red_master <- user_subset
+  user_subset <- user_subset  %>% transform(Code = sprintf("n%s",Code))
+  user_subset <- user_subset$Code
+  user_subset <- setdiff(user_subset, miss_namevector)
   df <- feather::read_feather(paste0(loc))
   df_subset <- subset(df, select = user_subset)
+  user_subset <- sub('.', '', user_subset)
+  user_subset <- red_master %>% filter(Code %in% user_subset)
+  Col_Names <- user_subset$Name; Col_Names <-factor(Col_Names) ;
   colnames(df_subset) <- Col_Names; colnames(df_subset)
   your_data <- tbl_df(df_subset)
   year_sets <-c("1" = "2000-01",
