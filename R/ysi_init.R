@@ -108,7 +108,7 @@ single_wave_func <- function(wave_n = NULL, set = set) {
   your_data$Wave_year <- year_sets[your_data$Wave_year]
 
   print(paste0("Done. See ",set,"_tbl"))
-  assign(paste0(set,"_tbl"),your_data,  envir = .GlobalEnv)
+  assign(paste0(set,"_tbl"), your_data,  envir = .GlobalEnv)
 
 }
 
