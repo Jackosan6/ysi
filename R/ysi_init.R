@@ -13,7 +13,7 @@
 ysi_init <- function(set = "key", xwave = F, wave_n = 14) {
 
 
-  list.of.packages <- c("tidyr", "feather","dplyr", "data.table","devtools", "ggplot2","scales", "ggrepel","DataCombine", "grattan")
+  list.of.packages <- c("tidyr", "feather","dplyr", "data.table","devtools", "ggplot2","scales", "ggrepel","DataCombine","doParallel", "foreach")
   new.packages <- list.of.packages[!(list.of.packages %in% installed.packages()[,"Package"])]
   if(length(new.packages)) install.packages(new.packages)
 
@@ -27,7 +27,13 @@ ysi_init <- function(set = "key", xwave = F, wave_n = 14) {
   suppressWarnings(suppressPackageStartupMessages(library(ggrepel)))
   suppressWarnings(suppressPackageStartupMessages(library(DataCombine)))
   suppressWarnings(suppressPackageStartupMessages(library(grattan)))
+  suppressWarnings(suppressPackageStartupMessages(library(doParallel)))
+  suppressWarnings(suppressPackageStartupMessages(library(foreach)))
 
+  # git_pack <- c("grattan", "gganimate")
+  # new.packages <- list.of.packages[!(list.of.packages %in% installed.packages()[,"Package"])]
+  # if
+  # git_pack <- c("grattan", "gganimate")
 
 
   Master <<- read.csv("C:/Users/User/Dropbox (YSI)/YSI Team Folder/Content/R Dev/Hdata Variable Names Code/Hdata_Master_Names.csv", na.strings=c("","NA"))
